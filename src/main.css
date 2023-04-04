@@ -1,0 +1,51 @@
+:root {
+	--card-width: 65mm;
+	--card-bleed: 2mm;
+	--card-margin: 0.5mm;
+	--page-width: 21cm;
+	--page-height: 29.7cm;
+	--page-padding: 0.55cm;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.card {
+	width: 100%;
+	height: 100%;
+	display: flex;
+}
+
+.card > svg {
+	height: auto;
+	width: var(--card-width);
+	min-width: var(--card-width);
+	max-width: var(--card-width);
+	aspect-ratio: 63/88;
+	border: var(--card-bleed) solid black;
+	margin: auto;
+}
+
+.card > svg > image {
+	clip-path: none;
+	mask: none;
+}
+
+.page {
+	page-break-after: always;
+	display: grid;
+	grid-template-columns: repeat(
+		3,
+		calc(var(--card-width) + calc(var(--card-bleed) * 2))
+	);
+	grid-template-rows: repeat(3, auto);
+	grid-gap: var(--card-margin);
+	width: var(--page-width);
+	height: var(--page-height);
+	padding: var(--page-padding);
+}
