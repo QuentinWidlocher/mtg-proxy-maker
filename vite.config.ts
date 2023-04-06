@@ -14,15 +14,15 @@ export default defineConfig({
 	],
 	build: {
 		minify: true,
-		assetsInlineLimit: Infinity,
+		assetsInlineLimit: 0,
 		rollupOptions: {},
 		ssr: true,
 		emptyOutDir: false,
-		lib: {
-			entry: "src/main.tsx",
-			fileName: "main",
-			name: "main",
-			formats: ["es"],
-		},
+		// lib: {
+		// 	entry: "src/main.tsx",
+		// 	fileName: "main",
+		// 	name: "main",
+		// 	formats: ["es"],
+		// },
 	},
 });

@@ -1,3 +1,4 @@
+import { readFile } from "fs/promises";
 import zero from "../assets/images/card-symbols/0.svg";
 import one from "../assets/images/card-symbols/1.svg";
 import ten from "../assets/images/card-symbols/10.svg";
@@ -135,6 +136,18 @@ export const symbols = {
 } as const;
 
 export type GameSymbol = keyof typeof symbols;
+
+export const symbolsBase64 = () =>
+	Promise.all(
+		Object.entries(symbols).map(async ([key, value]) => [
+			key,
+			await readFile(`.${value}`).then(
+				(data) => `data:image/svg+xml;base64,${data.toString("base64")}`
+			),
+		])
+	).then(
+		(entries) => Object.fromEntries(entries) as Record<GameSymbol, string>
+	);
 
 /**
  * I know this is crazy, but grapheme replacement is the best solution I could come up with.

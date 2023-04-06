@@ -5,6 +5,7 @@
 	--page-width: 21cm;
 	--page-height: 29.7cm;
 	--page-padding: 0.55cm;
+	--card-bgc: #161410;
 }
 
 html,
@@ -27,7 +28,7 @@ body {
 	min-width: var(--card-width);
 	max-width: var(--card-width);
 	aspect-ratio: 63/88;
-	border: var(--card-bleed) solid black;
+	border: var(--card-bleed) solid var(--card-bgc);
 	margin: auto;
 }
 

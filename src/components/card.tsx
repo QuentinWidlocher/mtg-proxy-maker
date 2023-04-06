@@ -1,12 +1,11 @@
-import { cardBackgroundUrls } from "../types/backgrounds";
+import { getBackgroundFromAspect } from "../types/backgrounds";
 import { Card } from "../types/card";
 import Art from "./art";
 import Description from "./description";
+import Metadata from "./metadata";
 import Strength from "./strength";
 import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
-import VariousData from "./various-data";
-import WatermarkComponent from "./watermark";
 
 export default async function CardComponent(card: Card) {
 	return (
@@ -24,7 +23,6 @@ export default async function CardComponent(card: Card) {
 				backgroundColor: "black",
 			}}
 		>
-			{card.artUrl && <Art url={card.artUrl} />}
 			<img
 				style={{
 					width: 630,
@@ -34,25 +32,20 @@ export default async function CardComponent(card: Card) {
 					top: 0,
 					left: 0,
 				}}
-				src={cardBackgroundUrls[card.background ?? "colorless-creature"]}
+				src={await getBackgroundFromAspect(card.aspect)}
 			/>
-			<TitleBar title={card.title} manaCost={card.manaCost} />
+			{card.artUrl && <Art url={card.artUrl} />}
+			{await TitleBar({ title: card.title, manaCost: card.manaCost })}
 			<TypeBar type={card.typeText} />
-			{card.watermark && (
-				<WatermarkComponent
-					watermark={card.watermark}
-					lowOpacity={
-						card.type != "land" && (!!card.flavorText || !!card.oracleText)
-					}
-				/>
-			)}
-			{card.type != "land" && (
-				<Description flavor={card.flavorText} oracle={card.oracleText} />
-			)}
+			{card.aspect.frame != "Basic Land" &&
+				(await Description({
+					flavor: card.flavorText,
+					oracle: card.oracleText,
+				}))}
 			{(card.power || card.toughness) && (
 				<Strength power={card.power} toughness={card.toughness} />
 			)}
-			<VariousData {...card} />
+			<Metadata {...card} />
 		</div>
 	);
 }

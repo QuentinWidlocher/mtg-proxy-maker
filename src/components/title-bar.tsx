@@ -1,3 +1,4 @@
+import { readFile } from "fs/promises";
 import { ManaType, manaTypeToSvg, manaTypes } from "../types/mana";
 import { symbols } from "../types/symbols";
 
@@ -6,7 +7,8 @@ type TitleBarProps = {
 	manaCost?: ManaType[];
 };
 
-function Mana({ src }: { src: string }) {
+async function Mana({ src }: { src: string }) {
+	const buffer = await readFile(`.${src}`);
 	return (
 		<img
 			style={{
@@ -18,7 +20,7 @@ function Mana({ src }: { src: string }) {
 				borderRadius: "100%",
 				boxShadow: "-2px 3px 0px black",
 			}}
-			src={src}
+			src={`data:image/svg+xml;base64,${buffer.toString("base64")}`}
 		/>
 	);
 }
@@ -31,7 +33,10 @@ const fontSizeByLength = {
 	0: 32,
 } as const;
 
-export default function TitleBar({ title, manaCost = [] }: TitleBarProps) {
+export default async function TitleBar({
+	title,
+	manaCost = [],
+}: TitleBarProps) {
 	const sortedMana = manaCost.sort(
 		(a, b) =>
 			manaTypes.findIndex((t) => t === a) - manaTypes.findIndex((t) => t === b)
@@ -75,12 +80,14 @@ export default function TitleBar({ title, manaCost = [] }: TitleBarProps) {
 						alignItems: "center",
 					}}
 				>
-					{colorlessMana.length > 0 && colorlessMana.length in symbols && (
-						<Mana src={symbols[colorlessMana.length as keyof typeof symbols]} />
+					{colorlessMana.length > 0 &&
+						colorlessMana.length in symbols &&
+						(await Mana({
+							src: symbols[colorlessMana.length as keyof typeof symbols],
+						}))}
+					{await Promise.all(
+						coloredMana.map((mana) => Mana({ src: manaTypeToSvg[mana] }))
 					)}
-					{coloredMana.map((mana) => (
-						<Mana src={manaTypeToSvg[mana]} />
-					))}
 				</div>
 			)}
 		</div>

@@ -1,15 +1,5 @@
-import { CardBackground } from "./backgrounds";
+import { CardColor, CardFrame } from "./backgrounds";
 import { ManaType } from "./mana";
-
-export type CardType =
-	| "creature"
-	| "land"
-	| "spell"
-	| "artifact"
-	| "enchantment"
-	| "planeswalker"
-	| "instant"
-	| "sorcery";
 
 export type Card = {
 	artUrl: string;
@@ -20,8 +10,11 @@ export type Card = {
 	title: string;
 	toughness?: string;
 	typeText: string;
-	type: CardType;
-	background: CardBackground;
+	aspect: {
+		frame: CardFrame;
+		color: CardColor;
+		legendary: boolean;
+	};
 	collectorNumber?: string;
 	set?: string;
 	rarity?: string;
@@ -29,23 +22,3 @@ export type Card = {
 	lang?: string;
 	watermark?: "forest" | "island" | "mountain" | "plains" | "swamp";
 };
-
-export function parseCardType(engTypeText: string): CardType {
-	if (engTypeText.toLowerCase().includes("creature")) {
-		return "creature";
-	} else if (engTypeText.toLowerCase().includes("land")) {
-		return "land";
-	} else if (engTypeText.toLowerCase().includes("artifact")) {
-		return "artifact";
-	} else if (engTypeText.toLowerCase().includes("enchantment")) {
-		return "enchantment";
-	} else if (engTypeText.toLowerCase().includes("planeswalker")) {
-		return "planeswalker";
-	} else if (engTypeText.toLowerCase().includes("instant")) {
-		return "instant";
-	} else if (engTypeText.toLowerCase().includes("sorcery")) {
-		return "sorcery";
-	} else {
-		throw new Error(`Unknown card type: ${engTypeText}`);
-	}
-}

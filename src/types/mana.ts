@@ -43,13 +43,16 @@ export const manaTypeToSvg: Record<ManaType, string> = {
 	"black-white": symbols.WB,
 };
 
-export type UnaryType = Extract<
+export type UnaryManaType = Extract<
 	ManaType,
 	"colorless" | "x" | "red" | "green" | "blue" | "black" | "white"
 >;
-export type MultiType = Exclude<ManaType, UnaryType>;
+export type BiManaType = Exclude<ManaType, UnaryManaType>;
 
-const unaryToMultiType: Record<MultiType, readonly [UnaryType, UnaryType]> = {
+export const unaryToBiType: Record<
+	BiManaType,
+	readonly [UnaryManaType, UnaryManaType]
+> = {
 	"red-green": ["red", "green"],
 	"red-blue": ["red", "blue"],
 	"red-black": ["red", "black"],
@@ -62,16 +65,20 @@ const unaryToMultiType: Record<MultiType, readonly [UnaryType, UnaryType]> = {
 	"black-white": ["black", "white"],
 } as const;
 
-export function assertUnaryType(type: ManaType): UnaryType {
-	if (Object.keys(unaryToMultiType).includes(type)) {
+export function isUnaryType(type: ManaType): type is UnaryManaType {
+	return !Object.keys(unaryToBiType).includes(type);
+}
+
+export function assertUnaryType(type: ManaType): UnaryManaType {
+	if (isUnaryType(type)) {
+		return type;
+	} else {
 		throw new Error(`Type ${type} is not unary`);
 	}
-
-	return type as UnaryType;
 }
 
 export function unaryTypesToType(
-	types: UnaryType[]
+	types: UnaryManaType[]
 ): ManaType | "multicolored" {
 	switch (types.length) {
 		case 0:
@@ -79,7 +86,7 @@ export function unaryTypesToType(
 		case 1:
 			return types[0];
 		default:
-			const result = Object.entries(unaryToMultiType).find(([multi, array]) => {
+			const result = Object.entries(unaryToBiType).find(([multi, array]) => {
 				return array.every((type) => types.includes(type));
 			});
 

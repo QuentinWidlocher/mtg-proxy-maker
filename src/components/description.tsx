@@ -1,3 +1,4 @@
+import { readFile } from "fs/promises";
 import flavorTextDividerUrl from "../assets/images/flavor-text-divider.png";
 import { replaceGraphemes } from "../types/symbols";
 
@@ -6,7 +7,14 @@ type DescriptionProps = {
 	flavor?: string;
 };
 
-export default function Description(props: DescriptionProps) {
+export default async function Description(props: DescriptionProps) {
+	let flavorTextDivider = null;
+
+	if (props.oracle && props.flavor) {
+		const buffer = await readFile(`.${flavorTextDividerUrl}`);
+		flavorTextDivider = `data:image/png;base64,${buffer.toString("base64")}`;
+	}
+
 	return (
 		<div
 			style={{
@@ -16,7 +24,7 @@ export default function Description(props: DescriptionProps) {
 				width: "100%",
 				top: 555,
 				height: 240,
-				paddingLeft: 50,
+				paddingLeft: 60,
 				paddingRight: 50,
 				position: "absolute",
 			}}
@@ -46,9 +54,9 @@ export default function Description(props: DescriptionProps) {
 						))}
 				</pre>
 			)}
-			{props.oracle && props.flavor && (
+			{flavorTextDivider && (
 				<img
-					src={flavorTextDividerUrl}
+					src={flavorTextDivider}
 					style={{
 						marginTop: 10,
 						marginBottom: 10,
