@@ -11,17 +11,16 @@ export default function Metadata(props: MetadataProps) {
 		<div
 			style={{
 				display: "flex",
-				flexDirection: "column",
-				width: "100%",
-				bottom: 25,
-				height: 35,
-				paddingLeft: 45,
-				paddingRight: 40,
+				"flex-direction": "column",
+				bottom: "1.7mm",
+				height: "4mm",
+				left: "4.3mm",
+				right: "4.2mm",
 				position: "absolute",
 				color: "white",
-				fontFamily: "Prompt",
-				fontSize: 16,
-				lineHeight: 0.6,
+				"font-family": "Prompt",
+				"font-size": "4.5pt",
+				"line-height": 1,
 			}}
 		>
 			<div style={{ display: "flex", flex: 1 }}>
@@ -44,9 +43,9 @@ export default function Metadata(props: MetadataProps) {
 					{props.artist && (
 						<span
 							style={{
-								marginLeft: 10,
-								fontFamily: "Beleren Small Caps",
-								transform: "translateY(2px)",
+								"margin-left": "1mm",
+								"font-family": "Beleren Small Caps",
+								// 'transform': "translateY(2px)",
 							}}
 						>
 							{props.artist}
@@ -57,13 +56,12 @@ export default function Metadata(props: MetadataProps) {
 					style={{
 						flex: 1,
 						display: "flex",
-						justifyContent: "flex-end",
-						fontFamily: "serif",
-						fontSize: 12,
-						marginTop: 5,
+						"justify-content": "flex-end",
+						"font-family": "serif",
+						"font-size": "4.4pt",
 					}}
 				>
-					{`TM ${new Date().getFullYear()} Wizards of the Coast`}
+					{`™️ & ©️ ${new Date().getFullYear()} Wizards of the Coast`}
 				</div>
 			</div>
 		</div>

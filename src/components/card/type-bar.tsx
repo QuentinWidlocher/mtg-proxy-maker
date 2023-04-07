@@ -7,22 +7,20 @@ export default function TypeBar({ type }: TypeBarProps) {
 		<div
 			style={{
 				display: "flex",
-				justifyContent: "space-around",
-				width: "100%",
-				top: 500,
-				height: 40,
-				paddingLeft: 50,
-				paddingRight: 50,
+				"align-items": "center",
+				top: "49.6mm",
+				left: "4.7mm",
+				right: "4.6mm",
+				height: "5mm",
 				position: "absolute",
 			}}
 		>
 			<h1
 				style={{
 					margin: 0,
-					marginTop: "auto",
-					marginBottom: "auto",
-					fontFamily: "Beleren",
-					fontSize: 28,
+					"margin-left": "0.5mm",
+					"font-family": "Beleren",
+					"font-size": "8.5pt",
 					flex: 1,
 				}}
 			>

@@ -1,11 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-	--card-width: 65mm;
-	--card-bleed: 2mm;
-	--card-margin: 0.5mm;
+	--card-width: 63mm;
+	--card-bleed: 1mm;
+	--card-margin: 1mm;
 	--page-width: 21cm;
 	--page-height: 29.7cm;
 	--page-padding: 0.55cm;
 	--card-bgc: #161410;
+}
+
+@font-face {
+	font-family: "Beleren Small Caps";
+	src: url("/assets/fonts/Beleren Small Caps.ttf");
+}
+@font-face {
+	font-family: "Beleren";
+	font-weight: bold;
+	src: url("/assets/fonts/Beleren-Bold.ttf");
+}
+@font-face {
+	font-family: "MPlantin";
+	font-weight: bold;
+	src: url("/assets/fonts/MPlantin-Bold.ttf");
+}
+@font-face {
+	font-family: "MPlantin";
+	font-style: italic;
+	src: url("/assets/fonts/MPlantin-Italic.ttf");
+}
+@font-face {
+	font-family: "MPlantin";
+	src: url("/assets/fonts/MPlantin.ttf");
+}
+@font-face {
+	font-family: "Prompt";
+	font-weight: 100;
+	src: url("/assets/fonts/Prompt-ExtraLight.ttf");
 }
 
 html,
@@ -16,37 +49,53 @@ body {
 	padding: 0;
 }
 
-.card {
-	width: 100%;
-	height: 100%;
-	display: flex;
+@media screen {
+	.card-grid {
+		margin: auto;
+		padding: 1rem;
+		grid-gap: var(--card-margin);
+		display: grid;
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax(min(calc(var(--card-width) + calc(var(--card-bleed) * 2)), 30%), 1fr)
+		);
+	}
 }
 
-.card > svg {
-	height: auto;
-	width: var(--card-width);
-	min-width: var(--card-width);
-	max-width: var(--card-width);
-	aspect-ratio: 63/88;
-	border: var(--card-bleed) solid var(--card-bgc);
-	margin: auto;
-}
+@media print {
+	html,
+	body {
+		background-color: white !important;
+	}
 
-.card > svg > image {
-	clip-path: none;
-	mask: none;
-}
+	main, .pages {
+		width: var(--page-width);
+		height: var(--page-height);
+	}
 
-.page {
-	page-break-after: always;
-	display: grid;
-	grid-template-columns: repeat(
-		3,
-		calc(var(--card-width) + calc(var(--card-bleed) * 2))
-	);
-	grid-template-rows: repeat(3, auto);
-	grid-gap: var(--card-margin);
-	width: var(--page-width);
-	height: var(--page-height);
-	padding: var(--page-padding);
+	.page-break {
+		page-break-after: always;
+	}
+
+	.page {
+		max-width: var(--page-width);
+		min-height: var(--page-height);
+		display: grid;
+		place-content: center;
+	}
+
+	.card-grid {
+		display: grid;
+		width: fit-content;
+		height: fit-content;
+		grid-template-columns: repeat(
+			3,
+			1fr
+		);
+		grid-template-rows: repeat(
+			3,
+			1fr
+		);
+		grid-gap: var(--card-margin);
+	}
 }

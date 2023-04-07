@@ -1,5 +1,3 @@
-import { existsSync } from "fs";
-import { readFile } from "fs/promises";
 import { Card } from "./card";
 import {
 	BiManaType,
@@ -156,22 +154,14 @@ export function biManaToColor(mana: BiManaType, gold: boolean): CardColor {
 	}
 }
 
-export async function getBackgroundFromAspect({
+export function getBackgroundFromAspect({
 	color,
 	frame,
 	legendary,
-}: Card["aspect"]): Promise<string> {
+}: Card["aspect"]): string {
 	const fileName = `Frame=${frame}, Color=${color}, Legendary=${
 		legendary ? "Yes" : "No"
 	}, Holo Stamp=Yes.svg`;
 
-	if (!existsSync(`./src/assets/images/card-backgrounds/${fileName}`)) {
-		throw new Error(`Background not found: ${fileName}`);
-	}
-
-	const buffer = await readFile(
-		`./src/assets/images/card-backgrounds/${fileName}`
-	);
-
-	return `data:image/svg+xml;base64,${buffer.toString("base64")}`;
+	return `assets/images/card-backgrounds/${fileName}`;
 }

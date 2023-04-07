@@ -41,12 +41,16 @@ export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
 	}
 }
 
-export async function fetchCards(title: string, quantity = 1): Promise<Card[]> {
+export async function fetchCards(
+	title: string,
+	quantity = 1,
+	lang = "en"
+): Promise<Card[]> {
 	const sanitizedTitle = title.split(" ").join("-");
 
 	const [frCards, enCards]: [any, any] = await Promise.all([
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}+lang:fr`
+			`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}+lang:${lang}`
 		),
 		fetch(`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}`),
 	]).then(([fr, en]) => Promise.all([fr.json(), en.json()]));
@@ -118,4 +122,16 @@ export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
 			})
 		)
 		.filter(Boolean);
+}
+
+export async function searchCard(search: string) {
+	if (search.length < 3) return [];
+
+	const response = await fetch(
+		`https://api.scryfall.com/cards/search/?q=${search}`
+	).then((r) => r.json() as any);
+
+	return response.data as Array<{
+		name: string;
+	}>;
 }
