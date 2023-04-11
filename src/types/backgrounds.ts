@@ -17,6 +17,30 @@ export const cardFrames = [
 
 export type CardFrame = typeof cardFrames[number];
 
+export const cardBackgrounds = [
+	"BG",
+	"Artifact",
+	"Black",
+	"Blue",
+	"BR",
+	"Green",
+	"GU",
+	"GW",
+	"Red",
+	"RG",
+	"RW",
+	"UB",
+	"UR",
+	"WB",
+	"White",
+	"WU",
+	"Gold",
+	"Land",
+	"Vehicle",
+] as const;
+
+export type CardBackground = typeof cardBackgrounds[number];
+
 export function parseCardFrame(engTypeText: string): CardFrame {
 	const lowercaseType = engTypeText.toLowerCase();
 
@@ -154,14 +178,81 @@ export function biManaToColor(mana: BiManaType, gold: boolean): CardColor {
 	}
 }
 
-export function getBackgroundFromAspect({
+export function getBackgroundFromColor(
+	color: CardColor,
+	frame: CardFrame
+): CardBackground {
+	switch (frame) {
+		case "Vehicle":
+			return "Vehicle";
+		case "Nonbasic Land":
+		case "Basic Land":
+			return "Land";
+		case "Creature":
+		case "Noncreature": {
+			switch (color) {
+				case "Black":
+					return "Black";
+				case "Blue":
+					return "Blue";
+				case "Green":
+					return "Green";
+				case "Red":
+					return "Red";
+				case "White":
+					return "White";
+				case "Colorless":
+				case "Artifact":
+					return "Artifact";
+				case "Gold-3+":
+				case "Gold-GW":
+				case "Gold-RG":
+				case "Gold-RW":
+				case "Gold-UB":
+				case "Gold-UR":
+				case "Gold-UW":
+				case "Gold-WB":
+					return "Gold";
+				case "hybrid-BG":
+					return "BG";
+				case "hybrid-BR":
+					return "BR";
+				case "hybrid-GU":
+					return "GU";
+				case "hybrid-GW":
+					return "GW";
+				case "hybrid-RG":
+					return "RG";
+				case "hybrid-RW":
+					return "RW";
+				case "hybrid-UB":
+					return "UB";
+				case "hybrid-UR":
+					return "UR";
+				case "hybrid-UW":
+					return "WU";
+				case "hybrid-WB":
+					return "WB";
+				default:
+					return "Artifact";
+			}
+		}
+	}
+}
+
+export function getFrameAndBackgroundFromAspect({
 	color,
 	frame,
 	legendary,
-}: Card["aspect"]): string {
+}: Card["aspect"]): [string, string] {
 	const fileName = `Frame=${frame}, Color=${color}, Legendary=${
 		legendary ? "Yes" : "No"
 	}, Holo Stamp=Yes.svg`;
 
-	return `assets/images/card-backgrounds/${fileName}`;
+	const background = getBackgroundFromColor(color, frame);
+
+	return [
+		`assets/images/card-frames/${fileName}`,
+		`assets/images/card-backgrounds/${background}.png`,
+	];
 }

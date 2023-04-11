@@ -73,7 +73,7 @@ export default function App() {
 				<div class="relative h-full overflow-y-auto print:h-auto print:overflow-y-visible pages bg-stone-700 print:bg-white">
 					{[...new Array(Math.ceil(cardListElements()!.length / 9))].map(
 						(_, i) => (
-							<details open>
+							<details open={i == 0}>
 								{i > 0 && <div class="page-break" />}
 								<summary class="m-5 ml-10 cursor-pointer text-xl text-white print:hidden">
 									Page {i + 1}

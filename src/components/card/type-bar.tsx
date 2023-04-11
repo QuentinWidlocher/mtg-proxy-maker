@@ -20,7 +20,7 @@ export default function TypeBar({ type }: TypeBarProps) {
 					margin: 0,
 					"margin-left": "0.5mm",
 					"font-family": "Beleren",
-					"font-size": "8.5pt",
+					"font-size": type.split(" ").length > 4 ? "7pt" : "8.5pt",
 					flex: 1,
 				}}
 			>

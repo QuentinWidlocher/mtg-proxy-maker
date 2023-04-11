@@ -138,7 +138,7 @@ export default function Sidebar(props: SidebarProps) {
 					</Button>
 					<Button
 						type="button"
-						class="w-full !bg-amber-500 hover:!bg-amber-600 text-amber-950"
+						class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600"
 						disabled={!props.cardList || props.cardList.length <= 0}
 						onClick={() => {
 							print();

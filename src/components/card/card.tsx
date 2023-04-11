@@ -1,4 +1,4 @@
-import { getBackgroundFromAspect } from "../../types/backgrounds";
+import { getFrameAndBackgroundFromAspect } from "../../types/backgrounds";
 import { Card } from "../../types/card";
 import Art from "./art";
 import Description from "./description";
@@ -8,7 +8,7 @@ import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
 export default function CardComponent(card: Card) {
-	console.log("rendering card", card);
+	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
 
 	return (
 		<div
@@ -18,7 +18,7 @@ export default function CardComponent(card: Card) {
 				display: "flex",
 				"font-family": "MPlantin",
 				"font-size": "12pt",
-				"background-color": "var(--card-bgc)",
+				"background-color": "var(--card-bgc, #161410)",
 				height: " auto",
 				width: "var(--card-width)",
 				"min-width": "var(--card-width)",
@@ -37,7 +37,17 @@ export default function CardComponent(card: Card) {
 					top: 0,
 					left: 0,
 				}}
-				src={getBackgroundFromAspect(card.aspect)}
+				src={background}
+			/>
+			<img
+				style={{
+					width: "100%",
+					height: "100%",
+					position: "absolute",
+					top: 0,
+					left: 0,
+				}}
+				src={frame}
 			/>
 			{card.artUrl && <Art url={card.artUrl} />}
 			<TitleBar title={card.title} manaCost={card.manaCost} />

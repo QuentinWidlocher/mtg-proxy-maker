@@ -29,11 +29,11 @@
 @font-face {
 	font-family: "MPlantin";
 	font-style: italic;
-	src: url("/assets/fonts/MPlantin-Italic.ttf");
+	src: url("/assets/fonts/MPlantin Italic.ttf");
 }
 @font-face {
 	font-family: "MPlantin";
-	src: url("/assets/fonts/MPlantin.ttf");
+	src: url("/assets/fonts/Mplantin.woff");
 }
 @font-face {
 	font-family: "Prompt";
@@ -48,6 +48,15 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+.card svg {
+	width: 100%;
+	height: 100%;
+}
+
+details:not([open]) > *:not(summary) {
+		display: none;
+	}
 
 @media screen {
 	.card-grid {

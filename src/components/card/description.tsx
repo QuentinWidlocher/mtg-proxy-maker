@@ -8,9 +8,11 @@ type DescriptionProps = {
 };
 
 function injectSymbols(description: string): JSX.Element {
+	console.debug("description", description);
 	return (
 		<>
 			{description.split(/{([^}]+)}/g).map((word, i) => {
+				console.debug("word", word);
 				if (word in symbols) {
 					return (
 						<img
@@ -33,6 +35,8 @@ function injectSymbols(description: string): JSX.Element {
 }
 
 export default function Description(props: DescriptionProps) {
+	const totalLength = (props.flavor?.length ?? 0) + (props.oracle?.length ?? 0);
+
 	return (
 		<div
 			style={{
@@ -44,7 +48,7 @@ export default function Description(props: DescriptionProps) {
 				left: "4.9mm",
 				right: "4.7mm",
 				position: "absolute",
-				"font-size": "7pt",
+				"font-size": totalLength >= 320 ? "6pt" : "7pt",
 				padding: "0.8mm",
 				"font-family": "MPlantin",
 				"line-height": 1,
@@ -60,14 +64,14 @@ export default function Description(props: DescriptionProps) {
 						"white-space": "pre-wrap",
 					}}
 				>
-					{props.oracle.split("\n").map((line, index) => (
+					{props.oracle.split("\n").map((paragraph, index) => (
 						<p
 							style={{
 								margin: 0,
 								"margin-top": index > 0 ? "1mm" : 0,
 							}}
 						>
-							{injectSymbols(line)}
+							{injectSymbols(paragraph)}
 						</p>
 					))}
 				</div>
