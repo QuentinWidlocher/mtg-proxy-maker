@@ -1,5 +1,4 @@
-import { createMediaQuery } from "@solid-primitives/media";
-import { For, createEffect, createSignal } from "solid-js";
+import { For, Show, createEffect, createSignal } from "solid-js";
 import FetchCard from "./components/card/fetch-card";
 import Sidebar from "./components/sidebar";
 import { parseMtgo } from "./services/mtgo-parser";
@@ -11,7 +10,6 @@ export default function App() {
 	const parsedCardList = parseMtgo(decodeURI(rawCardList));
 
 	const [openPages, setOpenPages] = createSignal<boolean[]>([]);
-	const printMode = createMediaQuery("print");
 
 	const [cardList, setCardList] =
 		createSignal<{ name: string; number: number }[]>(parsedCardList);
@@ -49,14 +47,37 @@ export default function App() {
 				setCardList={setCardList}
 				language={language()}
 				setLanguage={setLanguage}
-				totalPages={Math.ceil((cardNames() ?? []).length / 9)}
+				totalPages={openPages().filter(Boolean).length}
 			/>
 
 			<div class="relative h-full overflow-y-auto print:h-auto print:overflow-y-visible pages bg-stone-700 print:bg-white">
+				<div class="flex w-full print:hidden sticky top-0 z-20 bg-stone-700">
+					<button
+						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
+						onClick={() => {
+							setOpenPages(() =>
+								[...new Array(slicedCardElements().length)].fill(true)
+							);
+						}}
+					>
+						Open all pages
+					</button>
+					<button
+						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
+						onClick={() => {
+							setOpenPages(() =>
+								[...new Array(slicedCardElements().length)].fill(false)
+							);
+						}}
+					>
+						Close all pages
+					</button>
+				</div>
 				<For each={slicedCardElements()}>
 					{(cards, i) => (
 						<details
-							open={printMode() || openPages()[i()]}
+							class="group"
+							open={openPages()[i()]}
 							onToggle={(e) =>
 								setOpenPages((prev) => {
 									const newPages = [...prev];
@@ -66,14 +87,18 @@ export default function App() {
 							}
 						>
 							{i() > 0 && <div class="page-break" />}
-							<summary class="m-5 ml-10 cursor-pointer text-xl text-white print:hidden">
-								Page {i() + 1} ({cards.length} / 9)
+							<summary class="p-5 pl-10 hover:bg-stone-600 group-open:bg-stone-600 cursor-pointer text-xl text-white print:hidden">
+								Page {i() + 1} ({cards.length} / 9){" "}
+								{openPages()[i()] ? null : "(open to print)"}
 							</summary>
-							<div class="page">
-								<div class="card-grid">
-									<For each={cards}>{FetchCard}</For>
+
+							<Show when={openPages()[i()]}>
+								<div class="page bg-stone-600">
+									<div class="card-grid">
+										<For each={cards}>{FetchCard}</For>
+									</div>
 								</div>
-							</div>
+							</Show>
 						</details>
 					)}
 				</For>

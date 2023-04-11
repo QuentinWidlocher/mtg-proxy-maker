@@ -139,11 +139,14 @@ export default function Sidebar(props: SidebarProps) {
 					</Button>
 					<Button
 						type="button"
-						class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600"
-						disabled={!props.cardList || props.cardList.length <= 0}
+						class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600 disabled:!bg-amber-400 disabled:!cursor-not-allowed disabled:!text-amber-100"
+						disabled={
+							props.totalPages <= 0 ||
+							!props.cardList ||
+							props.cardList.length <= 0
+						}
 						onClick={() => {
 							print();
-							setTimeout(() => {});
 						}}
 					>
 						Print {props.totalPages} pages
