@@ -8,6 +8,7 @@ type SidebarProps = {
 	setCardList: Setter<{ name: string; number: number }[]>;
 	language: string;
 	setLanguage: Setter<string>;
+	totalPages: number;
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -142,9 +143,10 @@ export default function Sidebar(props: SidebarProps) {
 						disabled={!props.cardList || props.cardList.length <= 0}
 						onClick={() => {
 							print();
+							setTimeout(() => {});
 						}}
 					>
-						Print {Math.ceil((props.cardList ?? []).length / 9)} pages
+						Print {props.totalPages} pages
 					</Button>
 				</div>
 			</aside>

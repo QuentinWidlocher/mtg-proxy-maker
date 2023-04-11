@@ -207,6 +207,7 @@ export function getBackgroundFromColor(
 				case "Gold-3+":
 				case "Gold-GW":
 				case "Gold-RG":
+				case "Gold-BG":
 				case "Gold-RW":
 				case "Gold-UB":
 				case "Gold-UR":

@@ -1,8 +1,10 @@
-export default function CardNotFoundComponent({
-	cardName,
-}: {
+import { CardError } from "../../types/error";
+
+export default function CardErrorComponent(props: {
 	cardName: string;
+	error?: Error;
 }) {
+	console.debug("error", props.error);
 	return (
 		<div
 			class="flex shadow-xl print:hidden rounded-xl bg-stone-800"
@@ -21,9 +23,14 @@ export default function CardNotFoundComponent({
 			}}
 		>
 			<div class="flex flex-col items-center gap-5 m-auto text-stone-300">
-				<span>Card with name</span>
-				<span class="text-xl italic text-white">{cardName}</span>
-				<span>not found for this language</span>
+				{props.error && props.error instanceof CardError ? (
+					props.error.messageElement
+				) : (
+					<>
+						<span>Error while creating</span>
+						<span class="text-xl italic text-white">{props.cardName}</span>
+					</>
+				)}
 			</div>
 		</div>
 	);

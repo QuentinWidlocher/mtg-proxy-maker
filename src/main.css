@@ -54,10 +54,6 @@ body {
 	height: 100%;
 }
 
-details:not([open]) > *:not(summary) {
-		display: none;
-	}
-
 @media screen {
 	.card-grid {
 		margin: auto;
@@ -68,6 +64,10 @@ details:not([open]) > *:not(summary) {
 			auto-fit,
 			minmax(min(calc(var(--card-width) + calc(var(--card-bleed) * 2)), 30%), 1fr)
 		);
+	}
+
+	details:not([open]) > *:not(summary) {
+		display: none;
 	}
 }
 

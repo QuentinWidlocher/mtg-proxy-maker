@@ -8,6 +8,8 @@ import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
 export default function CardComponent(card: Card) {
+	console.log("Rendering card", card.title);
+
 	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
 
 	return (

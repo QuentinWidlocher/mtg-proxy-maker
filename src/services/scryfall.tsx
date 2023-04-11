@@ -1,5 +1,6 @@
 import { parseCardColor, parseCardFrame } from "../types/backgrounds";
 import { Card } from "../types/card";
+import { CardError } from "../types/error";
 import { ManaType } from "../types/mana";
 
 export function parseMana(manaCostString: string = ""): ManaType[] {
@@ -41,19 +42,51 @@ export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
 	}
 }
 
-export async function fetchCards(
+export async function fetchCard(
 	title: string,
-	quantity = 1,
-	lang = "en"
-): Promise<Card[]> {
+	lang = "en",
+	variant?: number
+): Promise<Card> {
 	const sanitizedTitle = title.split(" ").join("-");
 
 	const [frCards, enCards]: [any, any] = await Promise.all([
 		fetch(
 			`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}+lang:${lang}`
+		).catch((e) => {
+			throw new CardError(title, <>prout</>);
+		}),
+		fetch(`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}`).catch(
+			(e) => {
+				throw new CardError(title, <>prout</>);
+			}
 		),
-		fetch(`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}`),
 	]).then(([fr, en]) => Promise.all([fr.json(), en.json()]));
+
+	if (enCards.status == 404) {
+		throw new CardError(
+			title,
+			(
+				<>
+					<span>Card with name</span>
+					<span class="text-xl italic text-white">{title}</span>
+					<span>not found</span>
+				</>
+			)
+		);
+	}
+
+	if (frCards.status == 404) {
+		throw new CardError(
+			title,
+			(
+				<>
+					<span>Card with name</span>
+					<span class="text-xl italic text-white">{title}</span>
+					<span>not found for this language ({lang})</span>
+				</>
+			)
+		);
+	}
 
 	const index = enCards.data.findIndex((c: any) => c.name == title);
 	const [fr, en] = [frCards.data[index], enCards.data[index]];
@@ -88,18 +121,14 @@ export async function fetchCards(
 		set: fr["set"],
 	};
 
-	if (quantity === 1) {
-		return [card];
-	}
-
-	if (isBasicLand) {
+	if (isBasicLand && variant) {
 		const variants = await fetchVariants(en["name"]);
-		return Array.from({ length: quantity }, (_, i) => ({
+		return {
 			...card,
-			...variants[i % variants.length],
-		}));
+			...variants[variant % variants.length],
+		};
 	} else {
-		return Array.from({ length: quantity }, () => card);
+		return card;
 	}
 }
 
@@ -129,7 +158,20 @@ export async function searchCard(search: string) {
 
 	const response = await fetch(
 		`https://api.scryfall.com/cards/search/?q=${search}`
-	).then((r) => r.json() as any);
+	)
+		.then((r) => r.json() as any)
+		.catch(() => {
+			throw new CardError(
+				`Unknown card ${search}`,
+				(
+					<>
+						<span>Card with name</span>
+						<span class="text-xl italic text-white">{search}</span>
+						<span>not found</span>
+					</>
+				)
+			);
+		});
 
 	return response.data as Array<{
 		name: string;

@@ -8,11 +8,9 @@ type DescriptionProps = {
 };
 
 function injectSymbols(description: string): JSX.Element {
-	console.debug("description", description);
 	return (
 		<>
-			{description.split(/{([^}]+)}/g).map((word, i) => {
-				console.debug("word", word);
+			{description.split(/{([^}]+)}/g).map((word) => {
 				if (word in symbols) {
 					return (
 						<img
