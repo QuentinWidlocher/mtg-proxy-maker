@@ -5,8 +5,12 @@ import { parseMtgo } from "./services/mtgo-parser";
 
 export default function App() {
 	const url = new URL(window.location.href);
-	const rawLanguage = url.searchParams.get("language") ?? "en";
-	const rawCardList = url.searchParams.get("cardList") ?? "";
+	const rawLanguage =
+		url.searchParams.get("language") ??
+		localStorage.getItem("language") ??
+		"en";
+	const rawCardList =
+		url.searchParams.get("cardList") ?? localStorage.getItem("cardList") ?? "";
 	const parsedCardList = parseMtgo(decodeURI(rawCardList));
 
 	const [openPages, setOpenPages] = createSignal<boolean[]>([]);
@@ -16,14 +20,19 @@ export default function App() {
 	const [language, setLanguage] = createSignal(rawLanguage);
 
 	createEffect(() => {
+		const rawCardList = cardList()
+			.map((c) => `${c.number} ${c.name}`)
+			.join("\n");
+
 		const urlSearchParams = new URLSearchParams({
-			cardList: cardList()
-				.map((c) => `${c.number} ${c.name}`)
-				.join("\n"),
+			cardList: rawCardList,
 			language: language(),
 		}).toString();
 
 		window.history.replaceState(null, "", `/?${urlSearchParams}`);
+
+		localStorage.setItem("cardList", rawCardList);
+		localStorage.setItem("language", language());
 	});
 
 	const cardNames = () =>
