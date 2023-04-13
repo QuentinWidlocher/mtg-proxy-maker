@@ -8,8 +8,6 @@ import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
 export default function CardComponent(card: Card) {
-	console.log("Rendering card", card.title);
-
 	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
 
 	return (
@@ -21,7 +19,7 @@ export default function CardComponent(card: Card) {
 				"font-family": "MPlantin",
 				"font-size": "12pt",
 				"background-color": "var(--card-bgc, #161410)",
-				height: " auto",
+				height: "auto",
 				width: "var(--card-width)",
 				"min-width": "var(--card-width)",
 				"max-width": "var(--card-width)",

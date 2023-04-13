@@ -4,7 +4,8 @@ export default function CardErrorComponent(props: {
 	cardName: string;
 	error?: Error;
 }) {
-	console.debug("error", props.error);
+	console.error(props.error);
+
 	return (
 		<div
 			class="flex shadow-xl print:hidden rounded-xl bg-stone-800"
@@ -22,7 +23,7 @@ export default function CardErrorComponent(props: {
 				"box-sizing": "content-box",
 			}}
 		>
-			<div class="flex flex-col items-center gap-5 m-auto text-stone-300">
+			<div class="flex flex-col items-center gap-5 m-auto text-stone-300 px-5 text-center">
 				{props.error && props.error instanceof CardError ? (
 					props.error.messageElement
 				) : (

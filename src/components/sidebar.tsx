@@ -154,7 +154,7 @@ export default function Sidebar(props: SidebarProps) {
 				</div>
 			</aside>
 			<dialog
-				class="z-20 h-1/2 w-1/2 bg-stone-600 shadow-xl mt-52 rounded-lg backdrop:bg-black/50"
+				class="z-20 h-1/2 w-96 bg-stone-600 shadow-xl mt-52 rounded-lg backdrop:bg-black/50"
 				open={rawCardListDialogOpen()}
 			>
 				<form

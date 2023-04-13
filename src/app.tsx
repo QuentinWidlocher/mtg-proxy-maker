@@ -59,8 +59,8 @@ export default function App() {
 				totalPages={openPages().filter(Boolean).length}
 			/>
 
-			<div class="relative h-full overflow-y-auto print:h-auto print:overflow-y-visible pages bg-stone-700 print:bg-white">
-				<div class="flex w-full print:hidden sticky top-0 z-20 bg-stone-700">
+			<div class="relative h-full grid grid-cols-1 overflow-y-hidden grid-rows-[auto_1fr_auto] bg-stone-700 print:bg-white">
+				<div class="flex w-full print:hidden">
 					<button
 						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
 						onClick={() => {
@@ -82,35 +82,67 @@ export default function App() {
 						Close all pages
 					</button>
 				</div>
-				<For each={slicedCardElements()}>
-					{(cards, i) => (
-						<details
-							class="group"
-							open={openPages()[i()]}
-							onToggle={(e) =>
-								setOpenPages((prev) => {
-									const newPages = [...prev];
-									newPages[i()] = e.currentTarget.open;
-									return newPages;
-								})
-							}
-						>
-							{i() > 0 && <div class="page-break" />}
-							<summary class="p-5 pl-10 hover:bg-stone-600 group-open:bg-stone-600 cursor-pointer text-xl text-white print:hidden">
-								Page {i() + 1} ({cards.length} / 9){" "}
-								{openPages()[i()] ? null : "(open to print)"}
-							</summary>
+				<div class="overflow-y-auto pages print:h-auto print:overflow-y-visible">
+					<For each={slicedCardElements()}>
+						{(cards, i) => (
+							<details
+								class="group"
+								open={openPages()[i()]}
+								onToggle={(e) =>
+									setOpenPages((prev) => {
+										const newPages = [...prev];
+										newPages[i()] = e.currentTarget.open;
+										return newPages;
+									})
+								}
+							>
+								{i() > 0 && <div class="page-break" />}
+								<summary class="p-5 pl-10 hover:bg-stone-600 group-open:bg-stone-600 cursor-pointer text-xl text-white print:hidden">
+									Page {i() + 1} ({cards.length} / 9){" "}
+									{openPages()[i()] ? null : "(open to print)"}
+								</summary>
 
-							<Show when={openPages()[i()]}>
-								<div class="page bg-stone-600">
-									<div class="card-grid">
-										<For each={cards}>{FetchCard}</For>
+								<Show when={openPages()[i()]}>
+									<div class="page bg-stone-600 print:bg-white">
+										<div class="card-grid">
+											<For each={cards}>{FetchCard}</For>
+										</div>
 									</div>
-								</div>
-							</Show>
+								</Show>
+							</details>
+						)}
+					</For>
+				</div>
+				<div class="min-h-[3rem] p-5 bg-stone-700 print:hidden flex">
+					<div class="my-auto w-full flex justify-around text-white">
+						<span>
+							When printing, set your margins to "None" and your page scaling to
+							"100%"
+						</span>
+						<details>
+							<summary>See a bug ? Have a feature request ? </summary>
+
+							<ul class="h-10 mt-5">
+								<li>
+									<a
+										href="https://github.com/QuentinWidlocher/mtg-proxy-maker"
+										class="hover:underline"
+									>
+										Open an issue on GitHub
+									</a>
+								</li>
+								<li>
+									<a
+										href="mailto:quentin@widlocher.com"
+										class="hover:underline"
+									>
+										Send me an email
+									</a>
+								</li>
+							</ul>
 						</details>
-					)}
-				</For>
+					</div>
+				</div>
 			</div>
 		</main>
 	);

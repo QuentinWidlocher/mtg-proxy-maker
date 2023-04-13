@@ -20,5 +20,4 @@ export type Card = {
 	rarity?: string;
 	artist?: string;
 	lang?: string;
-	watermark?: "forest" | "island" | "mountain" | "plains" | "swamp";
 };

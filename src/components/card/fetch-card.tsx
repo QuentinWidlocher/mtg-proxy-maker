@@ -1,7 +1,8 @@
 import { JSX, Suspense, createResource } from "solid-js";
 import { fetchCard } from "../../services/scryfall";
 import CardComponent from "./card";
-import CardErrorComponent from "./card-not-found";
+import CardLoading from "./card-loading";
+import CardErrorComponent from "./card-error";
 
 export type FetchCardProps = {
 	cardName: string;
@@ -35,27 +36,5 @@ export default function FetchCard(props: FetchCardProps) {
 		}
 	);
 
-	return (
-		<Suspense
-			fallback={
-				<div
-					class="flex shadow-xl print:hidden rounded-xl bg-stone-500 animate-pulse"
-					style={{
-						position: "relative",
-						"font-family": "MPlantin",
-						"font-size": "12pt",
-						height: " auto",
-						width: "var(--card-width)",
-						"min-width": "var(--card-width)",
-						"max-width": "var(--card-width)",
-						"aspect-ratio": "63/88",
-						margin: "auto",
-						"box-sizing": "content-box",
-					}}
-				></div>
-			}
-		>
-			{card()}
-		</Suspense>
-	);
+	return <Suspense fallback={<CardLoading />}>{card()}</Suspense>;
 }

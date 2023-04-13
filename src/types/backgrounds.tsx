@@ -1,4 +1,5 @@
 import { Card } from "./card";
+import { CardError } from "./error";
 import {
 	BiManaType,
 	ManaType,
@@ -60,7 +61,16 @@ export function parseCardFrame(engTypeText: string): CardFrame {
 	) {
 		return "Noncreature";
 	} else {
-		throw new Error(`Unknown card type: ${engTypeText}`);
+		throw new CardError(
+			`Unknown card type: ${engTypeText}`,
+			(
+				<>
+					<span>Card type</span>
+					<span class="text-xl italic text-white">{engTypeText}</span>
+					<span>is not supported (yet)</span>
+				</>
+			)
+		);
 	}
 }
 

@@ -91,6 +91,18 @@ export async function fetchCard(
 	const index = enCards.data.findIndex((c: any) => c.name == title);
 	const [fr, en] = [frCards.data[index], enCards.data[index]];
 
+	if ("card_faces" in fr) {
+		throw new CardError(
+			`Card ${title} is a split card`,
+			(
+				<>
+					<span class="text-xl italic text-white">{title}</span>
+					<span>Split cards are not supported (yet)</span>
+				</>
+			)
+		);
+	}
+
 	const isBasicLand = en["type_line"].includes("Basic Land");
 	const colorsToUse: string[] = en["type_line"].toLowerCase().includes("land")
 		? fr["color_identity"]
