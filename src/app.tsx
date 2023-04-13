@@ -50,7 +50,7 @@ export default function App() {
 		);
 
 	return (
-		<main class="md:grid md:grid-rows-none md:grid-cols-[1fr_3fr] md:h-screen font-serif print:block">
+		<main class="md:grid md:grid-rows-none md:grid-cols-[1fr_3fr] md:h-screen font-serif print:!block print:overflow-visible">
 			<Sidebar
 				cardList={cardList()}
 				setCardList={setCardList}
@@ -59,7 +59,7 @@ export default function App() {
 				totalPages={openPages().filter(Boolean).length}
 			/>
 
-			<div class="relative h-full grid grid-cols-1 overflow-y-hidden grid-rows-[auto_1fr_auto] bg-stone-700 print:bg-white">
+			<div class="relative h-full grid grid-cols-1 overflow-y-hidden grid-rows-[auto_1fr_auto] bg-stone-700 print:bg-white print:overflow-visible">
 				<div class="flex w-full print:hidden">
 					<button
 						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
@@ -120,7 +120,9 @@ export default function App() {
 							"100%"
 						</span>
 						<details>
-							<summary>See a bug ? Have a feature request ? </summary>
+							<summary class="cursor-pointer">
+								See a bug ? Have a feature request ?{" "}
+							</summary>
 
 							<ul class="h-10 mt-5">
 								<li>
