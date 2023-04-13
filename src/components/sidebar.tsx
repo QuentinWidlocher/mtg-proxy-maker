@@ -8,7 +8,7 @@ type SidebarProps = {
 	setCardList: Setter<{ name: string; number: number }[]>;
 	language: string;
 	setLanguage: Setter<string>;
-	totalPages: number;
+	pages: boolean[];
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -141,7 +141,7 @@ export default function Sidebar(props: SidebarProps) {
 						type="button"
 						class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600 disabled:!bg-amber-400 disabled:!cursor-not-allowed disabled:!text-amber-100"
 						disabled={
-							props.totalPages <= 0 ||
+							props.pages.every((b) => !b) ||
 							!props.cardList ||
 							props.cardList.length <= 0
 						}
@@ -149,7 +149,8 @@ export default function Sidebar(props: SidebarProps) {
 							print();
 						}}
 					>
-						Print {props.totalPages} pages
+						Print {props.pages.filter(Boolean).length} / {props.pages.length}{" "}
+						pages
 					</Button>
 				</div>
 			</aside>

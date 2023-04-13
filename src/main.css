@@ -56,18 +56,14 @@ body {
 
 @media screen {
 	.card-grid {
-		margin: auto;
-		padding: 1rem;
+		margin: 0 auto;
+		width: fit-content;
 		grid-gap: var(--card-margin);
 		display: grid;
 		grid-template-columns: repeat(
-			auto-fit,
-			minmax(min(calc(var(--card-width) + calc(var(--card-bleed) * 2)), 30%), 1fr)
+			3,
+			auto
 		);
-	}
-
-	details:not([open]) > *:not(summary) {
-		display: none;
 	}
 }
 

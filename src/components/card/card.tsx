@@ -12,7 +12,8 @@ export default function CardComponent(card: Card) {
 
 	return (
 		<div
-			class="rounded-xl print:rounded-none card hover:z-10"
+			tabIndex={0}
+			class="rounded-xl print:rounded-none card hover:z-10 focus:transition-transform focus:scale-150 focus:z-20"
 			style={{
 				position: "relative",
 				display: "flex",
