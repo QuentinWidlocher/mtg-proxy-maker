@@ -32,11 +32,38 @@ export default defineConfig({
 				],
 			},
 			workbox: {
-				globPatterns: [
-					"**/*.{js,css,html,ico,png,svg}",
-					"https://api.scryfall.com/*",
+				runtimeCaching: [
+					{
+						urlPattern: /^https:\/\/api\.scryfall\.com\/.*/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "scryfall-cache",
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+					{
+						urlPattern: /^https:\/\/raw\.githubusercontent\.com\/*/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "github-cache",
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
+					{
+						urlPattern: /\.(png|svg|jpg|jpeg)$/i,
+						handler: "CacheFirst",
+						options: {
+							cacheName: "assets-cache",
+							cacheableResponse: {
+								statuses: [0, 200],
+							},
+						},
+					},
 				],
-				maximumFileSizeToCacheInBytes: 5_000_000,
 			},
 		}),
 	],
