@@ -263,7 +263,7 @@ export function getFrameAndBackgroundFromAspect({
 	const background = getBackgroundFromColor(color, frame);
 
 	return [
-		`assets/images/card-frames/${fileName}`,
-		`assets/images/card-backgrounds/${background}.png`,
+		`https://raw.githubusercontent.com/QuentinWidlocher/mtg-proxy-maker/main/public/assets/images/card-frames/${fileName}`,
+		`https://raw.githubusercontent.com/QuentinWidlocher/mtg-proxy-maker/main/public/assets/images/card-backgrounds/${background}.png`,
 	];
 }
