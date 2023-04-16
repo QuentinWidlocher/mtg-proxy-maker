@@ -110,7 +110,11 @@ export const cardColors = [
 
 export type CardColor = typeof cardColors[number];
 
-export function parseCardColor(mana: ManaType[], artifact: boolean): CardColor {
+export function parseCardColor(
+	mana: ManaType[],
+	artifact: boolean,
+	bicolorManaOnly: boolean
+): CardColor {
 	if (artifact) {
 		return "Artifact";
 	}
@@ -127,13 +131,17 @@ export function parseCardColor(mana: ManaType[], artifact: boolean): CardColor {
 				return biManaToColor(coloredMana[0], false);
 			}
 		case 2:
+			console.debug("coloredMana", coloredMana);
 			if (isUnaryType(coloredMana[0]) && isUnaryType(coloredMana[1])) {
 				const result = Object.entries(unaryToBiType).find(([multi, array]) => {
+					console.debug("[multi, array]", [multi, array]);
 					return array.every((type) => coloredMana.includes(type));
 				});
 
+				console.debug("result", result);
+
 				if (result) {
-					return biManaToColor(result[0] as BiManaType, true);
+					return biManaToColor(result[0] as BiManaType, !bicolorManaOnly);
 				} else {
 					return "Gold-3+";
 				}
@@ -165,6 +173,7 @@ export function unaryManaToColor(mana: UnaryManaType): CardColor {
 }
 
 export function biManaToColor(mana: BiManaType, gold: boolean): CardColor {
+	console.debug("{mana, gold}", { mana, gold });
 	switch (mana) {
 		case "red-green":
 			return gold ? "Gold-RG" : "hybrid-RG";
@@ -223,6 +232,8 @@ export function getBackgroundFromColor(
 				case "Gold-RG":
 				case "Gold-BG":
 				case "Gold-RW":
+				case "Gold-BR":
+				case "Gold-GU":
 				case "Gold-UB":
 				case "Gold-UR":
 				case "Gold-UW":

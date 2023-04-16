@@ -1,7 +1,7 @@
 import { parseCardColor, parseCardFrame } from "../types/backgrounds";
 import { Card } from "../types/card";
 import { CardError } from "../types/error";
-import { ManaType } from "../types/mana";
+import { ManaType, isBiType } from "../types/mana";
 
 export function parseMana(manaCostString: string = ""): ManaType[] {
 	const manaCost = manaCostString.match(/\{(.+?)\}/g) ?? [];
@@ -12,6 +12,7 @@ export function parseMana(manaCostString: string = ""): ManaType[] {
 }
 
 export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
+	console.debug("manaLetter", manaLetter);
 	switch (manaLetter) {
 		case "W":
 			return "white";
@@ -25,18 +26,38 @@ export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
 			return "green";
 		case "X":
 			return "x";
-		case "U/B":
-			return "blue-black";
 		case "R/G":
+		case "G/R":
 			return "red-green";
+		case "R/U":
+		case "U/R":
+			return "red-blue";
+		case "R/B":
+		case "B/R":
+			return "red-black";
 		case "R/W":
+		case "W/R":
 			return "red-white";
-		case "G/W":
-			return "green-white";
 		case "G/U":
+		case "U/G":
 			return "green-blue";
+		case "G/B":
+		case "B/G":
+			return "green-black";
+		case "G/W":
+		case "W/G":
+			return "green-white";
+		case "U/B":
+		case "B/U":
+			return "blue-black";
+		case "U/W":
+		case "W/U":
+			return "blue-white";
+		case "B/W":
+		case "W/B":
+			return "black-white";
 		default:
-			return [...new Array(parseInt(manaLetter))].map(
+			return [...new Array(parseInt(manaLetter) || 0)].map(
 				() => "colorless" as const
 			);
 	}
@@ -108,16 +129,20 @@ export async function fetchCard(
 		? fr["color_identity"]
 		: fr["colors"];
 	const manaTypes = colorsToUse.flatMap(manaLetterToType);
+	const manaCost = parseMana(fr["mana_cost"]);
 
 	const card: Card = {
 		title: fr["printed_name"] || fr["name"],
-		manaCost: parseMana(fr["mana_cost"]),
+		manaCost,
 		artUrl: en["image_uris"]?.["art_crop"],
 		aspect: {
 			frame: parseCardFrame(en["type_line"]),
 			color: parseCardColor(
 				manaTypes,
-				en["type_line"].toLowerCase().includes("artifact")
+				en["type_line"].toLowerCase().includes("artifact"),
+				manaCost
+					.filter((type) => type != "colorless" && type != "x")
+					.every(isBiType)
 			),
 			legendary:
 				en["frame_effects"]?.includes("legendary") ||

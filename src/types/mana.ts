@@ -1,3 +1,4 @@
+import { biManaToColor } from "./backgrounds";
 import { symbols } from "./symbols";
 
 // In order
@@ -67,6 +68,10 @@ export const unaryToBiType: Record<
 
 export function isUnaryType(type: ManaType): type is UnaryManaType {
 	return !Object.keys(unaryToBiType).includes(type);
+}
+
+export function isBiType(type: ManaType): type is BiManaType {
+	return Object.keys(unaryToBiType).includes(type);
 }
 
 export function assertUnaryType(type: ManaType): UnaryManaType {
