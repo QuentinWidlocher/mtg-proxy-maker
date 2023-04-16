@@ -1,9 +1,27 @@
+import { JSX } from "solid-js/jsx-runtime";
+import { Card } from "../../types/card";
 import { ManaType, manaTypeToSvg, manaTypes } from "../../types/mana";
 import { symbols } from "../../types/symbols";
 
 type TitleBarProps = {
 	title: string;
+	category: Card["category"];
 	manaCost?: ManaType[];
+};
+
+const style: Record<Card["category"], JSX.CSSProperties> = {
+	Planeswalker: {
+		top: "3mm",
+		height: "4.4mm",
+		left: "4.5mm",
+		right: "4.6mm",
+	},
+	Regular: {
+		top: "4.5mm",
+		height: "4.9mm",
+		left: "4.7mm",
+		right: "4.6mm",
+	},
 };
 
 function Mana({ src }: { src: string }) {
@@ -31,7 +49,11 @@ const fontSizeByLength = {
 	0: "10pt",
 } as const;
 
-export default function TitleBar({ title, manaCost = [] }: TitleBarProps) {
+export default function TitleBar({
+	title,
+	category,
+	manaCost = [],
+}: TitleBarProps) {
 	const sortedMana = manaCost.sort(
 		(a, b) =>
 			manaTypes.findIndex((t) => t === a) - manaTypes.findIndex((t) => t === b)
@@ -45,13 +67,11 @@ export default function TitleBar({ title, manaCost = [] }: TitleBarProps) {
 			style={{
 				display: "flex",
 				"justify-content": "space-around",
-				top: "4.5mm",
-				height: "4.9mm",
-				left: "4.7mm",
-				right: "4.6mm",
 				position: "absolute",
 				"font-family": "Beleren",
 				"white-space": "nowrap",
+				"z-index": 2,
+				...style[category],
 			}}
 		>
 			<h1

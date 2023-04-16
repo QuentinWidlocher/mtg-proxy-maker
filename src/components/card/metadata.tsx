@@ -1,9 +1,12 @@
+import { Card } from "../../types/card";
+
 type MetadataProps = {
 	collectorNumber?: string;
 	set?: string;
 	rarity?: string;
 	artist?: string;
 	lang?: string;
+	category?: Card["category"];
 };
 
 export default function Metadata(props: MetadataProps) {
@@ -21,6 +24,7 @@ export default function Metadata(props: MetadataProps) {
 				"font-family": "Prompt",
 				"font-size": "4.5pt",
 				"line-height": 1,
+				"z-index": 2,
 			}}
 		>
 			<div style={{ display: "flex", flex: 1 }}>

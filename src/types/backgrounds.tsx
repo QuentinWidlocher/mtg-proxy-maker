@@ -14,6 +14,7 @@ export const cardFrames = [
 	"Creature",
 	"Nonbasic Land",
 	"Noncreature",
+	"Planeswalker",
 ] as const;
 
 export type CardFrame = typeof cardFrames[number];
@@ -60,6 +61,8 @@ export function parseCardFrame(engTypeText: string): CardFrame {
 		lowercaseType.includes("artifact")
 	) {
 		return "Noncreature";
+	} else if (lowercaseType.includes("planeswalker")) {
+		return "Planeswalker";
 	} else {
 		throw new CardError(
 			`Unknown card type: ${engTypeText}`,
@@ -199,6 +202,7 @@ export function getBackgroundFromColor(
 		case "Basic Land":
 			return "Land";
 		case "Creature":
+		case "Planeswalker":
 		case "Noncreature": {
 			switch (color) {
 				case "Black":

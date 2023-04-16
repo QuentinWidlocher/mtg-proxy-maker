@@ -1,18 +1,36 @@
+import { JSX } from "solid-js/jsx-runtime";
+import { Card } from "../../types/card";
+
 type TypeBarProps = {
 	type: string;
+	category: Card["category"];
 };
 
-export default function TypeBar({ type }: TypeBarProps) {
+const style: Record<Card["category"], JSX.CSSProperties> = {
+	Planeswalker: {
+		top: "49.4mm",
+		left: "4.7mm",
+		right: "4.6mm",
+		height: "4.3mm",
+		position: "absolute",
+	},
+	Regular: {
+		top: "49.6mm",
+		left: "4.7mm",
+		right: "4.6mm",
+		height: "5mm",
+	},
+};
+
+export default function TypeBar({ type, category }: TypeBarProps) {
 	return (
 		<div
 			style={{
 				display: "flex",
 				"align-items": "center",
-				top: "49.6mm",
-				left: "4.7mm",
-				right: "4.6mm",
-				height: "5mm",
 				position: "absolute",
+				"z-index": 2,
+				...style[category],
 			}}
 		>
 			<h1

@@ -20,4 +20,12 @@ export type Card = {
 	rarity?: string;
 	artist?: string;
 	lang?: string;
-};
+} & (
+	| {
+			category: "Regular";
+	  }
+	| {
+			category: "Planeswalker";
+			loyalty: string;
+	  }
+);

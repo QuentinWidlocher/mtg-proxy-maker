@@ -119,7 +119,9 @@ export async function fetchCard(
 				manaTypes,
 				en["type_line"].toLowerCase().includes("artifact")
 			),
-			legendary: fr["frame_effects"]?.includes("legendary"),
+			legendary:
+				en["frame_effects"]?.includes("legendary") ||
+				en["type_line"].toLowerCase().includes("legendary"),
 		},
 		typeText: fr["printed_type_line"] || en["type_line"],
 		oracleText: fr["printed_text"] || fr["oracle_text"],
@@ -131,6 +133,10 @@ export async function fetchCard(
 		lang: fr["lang"],
 		rarity: fr["rarity"],
 		set: fr["set"],
+		category: en["type_line"].toLowerCase().includes("planeswalker")
+			? "Planeswalker"
+			: "Regular",
+		loyalty: en["loyalty"],
 	};
 
 	if (isBasicLand && variant) {
@@ -138,7 +144,7 @@ export async function fetchCard(
 		return {
 			...card,
 			...variants[variant % variants.length],
-		};
+		} as Card;
 	} else {
 		return card;
 	}

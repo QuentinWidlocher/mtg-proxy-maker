@@ -1,14 +1,18 @@
 import { getFrameAndBackgroundFromAspect } from "../../types/backgrounds";
 import { Card } from "../../types/card";
 import Art from "./art";
-import Description from "./description";
 import Metadata from "./metadata";
+import PlaneswalkerDescription from "./planeswalker-description";
+import PlaneswalkerLoyalty from "./planeswalker-loyalty";
+import RegularDescription from "./regular-description";
 import Strength from "./strength";
 import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
 export default function CardComponent(card: Card) {
 	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
+
+	console.debug("card.title", card.title);
 
 	return (
 		<div
@@ -40,6 +44,20 @@ export default function CardComponent(card: Card) {
 				}}
 				src={background}
 			/>
+			{/* Black mask for the planeswalker card */}
+			{card.category == "Planeswalker" && (
+				<div
+					style={{
+						bottom: "5.5mm",
+						height: "2mm",
+						left: "0",
+						right: "0",
+						position: "absolute",
+						background: 'var(--card-bgc, "black")',
+					}}
+				/>
+			)}
+			{card.artUrl && <Art url={card.artUrl} category={card.category} />}
 			<img
 				style={{
 					width: "100%",
@@ -47,19 +65,32 @@ export default function CardComponent(card: Card) {
 					position: "absolute",
 					top: 0,
 					left: 0,
+					"z-index": card.category == "Planeswalker" ? 1 : 0,
 				}}
 				src={frame}
 			/>
-			{card.artUrl && <Art url={card.artUrl} />}
-			<TitleBar title={card.title} manaCost={card.manaCost} />
-			<TypeBar type={card.typeText} />
-			{card.aspect.frame != "Basic Land" &&
-				Description({
-					flavor: card.flavorText,
-					oracle: card.oracleText,
-				})}
-			{(card.power || card.toughness) && (
-				<Strength power={card.power} toughness={card.toughness} />
+			<TitleBar
+				title={card.title}
+				manaCost={card.manaCost}
+				category={card.category}
+			/>
+			<TypeBar type={card.typeText} category={card.category} />
+			{card.category == "Regular" ? (
+				card.aspect.frame != "Basic Land" && (
+					<RegularDescription
+						flavor={card.flavorText}
+						oracle={card.oracleText}
+					/>
+				)
+			) : (
+				<PlaneswalkerDescription oracle={card.oracleText} />
+			)}
+			{card.category == "Regular" ? (
+				(card.power || card.toughness) && (
+					<Strength power={card.power} toughness={card.toughness} />
+				)
+			) : (
+				<PlaneswalkerLoyalty value={card.loyalty} />
 			)}
 			<Metadata {...card} />
 		</div>

@@ -2,7 +2,7 @@ import { JSX } from "solid-js/jsx-runtime";
 import flavorTextDividerUrl from "../../assets/images/flavor-text-divider.png";
 import { symbols } from "../../types/symbols";
 
-type DescriptionProps = {
+type RegularDescriptionProps = {
 	oracle?: string;
 	flavor?: string;
 };
@@ -32,7 +32,7 @@ function injectSymbols(description: string): JSX.Element {
 	);
 }
 
-export default function Description(props: DescriptionProps) {
+export default function RegularDescription(props: RegularDescriptionProps) {
 	const totalLength = (props.flavor?.length ?? 0) + (props.oracle?.length ?? 0);
 
 	return (

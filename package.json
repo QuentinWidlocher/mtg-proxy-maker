@@ -16,7 +16,8 @@
   },
   "dependencies": {
     "@solid-primitives/scheduled": "^1.3.2",
-    "solid-js": "^1.7.2"
+    "solid-js": "^1.7.2",
+    "ts-pattern": "^4.2.2"
   },
   "devDependencies": {
     "@total-typescript/ts-reset": "^0.4.2",
