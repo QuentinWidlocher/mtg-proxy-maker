@@ -1,3 +1,4 @@
+import { match } from "ts-pattern";
 import { parseCardColor, parseCardFrame } from "../types/backgrounds";
 import { Card } from "../types/card";
 import { CardError } from "../types/error";
@@ -72,15 +73,35 @@ export async function fetchCard(
 
 	const [frCards, enCards]: [any, any] = await Promise.all([
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}+lang:${lang}`
+			`https://api.scryfall.com/cards/search/?q=((!${sanitizedTitle}+lang:${lang})+or+(${sanitizedTitle}+t:token))+order:released`
 		).catch((e) => {
-			throw new CardError(title, <>prout</>);
+			console.error(e);
+			throw new CardError(
+				title,
+				(
+					<>
+						<span>Card with name</span>
+						<span class="text-xl italic text-white">{title}</span>
+						<span>not found for lang {lang}</span>
+					</>
+				)
+			);
 		}),
-		fetch(`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}`).catch(
-			(e) => {
-				throw new CardError(title, <>prout</>);
-			}
-		),
+		fetch(
+			`https://api.scryfall.com/cards/search/?q=((!${sanitizedTitle})+or+(${sanitizedTitle}+t:token))+order:released`
+		).catch((e) => {
+			console.error(e);
+			throw new CardError(
+				title,
+				(
+					<>
+						<span>Card with name</span>
+						<span class="text-xl italic text-white">{title}</span>
+						<span>not found</span>
+					</>
+				)
+			);
+		}),
 	]).then(([fr, en]) => Promise.all([fr.json(), en.json()]));
 
 	if (enCards.status == 404) {
@@ -202,22 +223,27 @@ export async function searchCard(search: string) {
 
 	const response = await fetch(
 		`https://api.scryfall.com/cards/search/?q=${search}`
-	)
-		.then((r) => r.json() as any)
-		.catch(() => {
-			throw new CardError(
-				`Unknown card ${search}`,
-				(
-					<>
-						<span>Card with name</span>
-						<span class="text-xl italic text-white">{search}</span>
-						<span>not found</span>
-					</>
-				)
+	).then(async (r) => {
+		const json = (await r.json()) as any;
+		if ("status" in json) {
+			throw new Error(
+				match(json.status)
+					.with(404, () => "No cards found")
+					.otherwise(() => "An error occured")
 			);
-		});
+		} else {
+			return json;
+		}
+	});
 
-	return response.data as Array<{
+	const result: Array<{
 		name: string;
-	}>;
+		type_line: string;
+	}> = response.data;
+
+	const deduped = result.filter(
+		(card, index) => result.findIndex((c) => c.name == card.name) == index
+	);
+
+	return deduped;
 }

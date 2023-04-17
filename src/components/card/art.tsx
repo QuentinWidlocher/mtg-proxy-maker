@@ -14,6 +14,7 @@ const style: Record<Card["category"], JSX.CSSProperties> = {
 		top: "8.3mm",
 		left: "4.7mm",
 		"object-fit": "cover",
+		"object-position": "top",
 	},
 	Regular: {
 		width: "53.4mm",
@@ -22,6 +23,7 @@ const style: Record<Card["category"], JSX.CSSProperties> = {
 		top: "10.3mm",
 		left: "4.9mm",
 		"object-fit": "cover",
+		"object-position": "top",
 	},
 };
 

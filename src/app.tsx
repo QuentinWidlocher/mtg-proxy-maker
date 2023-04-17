@@ -127,7 +127,14 @@ export default function App() {
 							margin.
 						</p>
 						<p>
-							If you don't see a card in the list, it means it's not available
+							The search box supports all the{" "}
+							<a
+								class="text-white font-bold hover:underline"
+								href="https://scryfall.com/docs/syntax"
+							>
+								Scryfall search syntax
+							</a>
+							. If you don't see a card in the list, it means it's not available
 							on Scryfall.
 						</p>
 						<div>
@@ -137,7 +144,7 @@ export default function App() {
 								<li>
 									<a
 										href="https://github.com/QuentinWidlocher/mtg-proxy-maker"
-										class="hover:underline text-white"
+										class="font-bold hover:underline text-white"
 									>
 										Open an issue on GitHub
 									</a>
@@ -145,7 +152,7 @@ export default function App() {
 								<li>
 									<a
 										href="mailto:quentin@widlocher.com"
-										class="hover:underline text-white"
+										class="font-bold hover:underline text-white"
 									>
 										Send me an email
 									</a>

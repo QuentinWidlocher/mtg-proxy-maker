@@ -12,8 +12,6 @@ import TypeBar from "./type-bar";
 export default function CardComponent(card: Card) {
 	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
 
-	console.debug("card.title", card.title);
-
 	return (
 		<div
 			tabIndex={0}

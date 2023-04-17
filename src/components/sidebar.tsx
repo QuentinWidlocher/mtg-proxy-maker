@@ -117,10 +117,22 @@ export default function Sidebar(props: SidebarProps) {
 
 					<ScryfallSearchBox
 						onAddCard={(cardName) =>
-							props.setCardList((prev) => [
-								...prev,
-								{ name: cardName, number: 1 },
-							])
+							props.setCardList((prev) => {
+								if (prev.some((c) => c.name == cardName)) {
+									return prev.map((c) => {
+										if (c.name == cardName) {
+											return {
+												...c,
+												number: c.number + 1,
+											};
+										} else {
+											return c;
+										}
+									});
+								} else {
+									return [...prev, { name: cardName, number: 1 }];
+								}
+							})
 						}
 					/>
 					<Button
