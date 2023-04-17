@@ -87,7 +87,11 @@ export default function CardComponent(card: Card) {
 			)}
 			{card.category == "Regular" ? (
 				(card.power || card.toughness) && (
-					<Strength power={card.power} toughness={card.toughness} />
+					<Strength
+						power={card.power}
+						toughness={card.toughness}
+						textColor={card.aspect.frame == "Vehicle" ? "white" : "black"}
+					/>
 				)
 			) : (
 				<PlaneswalkerLoyalty value={card.loyalty} />

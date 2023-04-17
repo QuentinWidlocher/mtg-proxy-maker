@@ -139,7 +139,8 @@ export async function fetchCard(
 			frame: parseCardFrame(en["type_line"]),
 			color: parseCardColor(
 				manaTypes,
-				en["type_line"].toLowerCase().includes("artifact"),
+				en["type_line"].toLowerCase().includes("artifact") &&
+					!en["type_line"].toLowerCase().includes("vehicle"),
 				manaCost
 					.filter((type) => type != "colorless" && type != "x")
 					.every(isBiType)

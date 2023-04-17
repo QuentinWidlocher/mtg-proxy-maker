@@ -1,11 +1,13 @@
 type StrengthProps = {
 	power?: string;
 	toughness?: string;
+	textColor?: string;
 };
 
 export default function Strength({
 	power = "",
 	toughness = "",
+	textColor = "black",
 }: StrengthProps) {
 	return (
 		<div
@@ -21,6 +23,7 @@ export default function Strength({
 				"font-family": "Beleren",
 				"font-size": "10pt",
 				"z-index": 2,
+				color: textColor,
 			}}
 		>
 			<span
