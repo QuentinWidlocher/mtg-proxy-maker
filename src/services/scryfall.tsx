@@ -13,7 +13,6 @@ export function parseMana(manaCostString: string = ""): ManaType[] {
 }
 
 export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
-	console.debug("manaLetter", manaLetter);
 	switch (manaLetter) {
 		case "W":
 			return "white";
