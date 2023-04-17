@@ -1,4 +1,4 @@
-import { createEffect, createResource, createSignal } from "solid-js";
+import { createResource, createSignal } from "solid-js";
 import { match } from "ts-pattern";
 import { searchCard } from "../services/scryfall";
 
@@ -6,16 +6,11 @@ type ScryfallSearchBoxProps = {
 	onAddCard: (card: string) => void;
 };
 
+const event = new MouseEvent("mousedown");
+
 export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 	const [search, setSearch] = createSignal<string | null>(null);
 	const [results] = createResource(search, searchCard);
-	let selectRef!: HTMLSelectElement;
-
-	createEffect(() => {
-		if (results.state == "ready" && results()?.length > 0) {
-			selectRef.focus();
-		}
-	});
 
 	return (
 		<div class="flex flex-col gap-2">
@@ -43,7 +38,6 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 				</button>
 			</form>
 			<select
-				ref={selectRef}
 				class="bg-stone-200 rounded flex-1 pl-2 py-2"
 				onChange={(e) => {
 					props.onAddCard(e.currentTarget.value);
