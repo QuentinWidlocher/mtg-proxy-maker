@@ -3,6 +3,7 @@ import { ManaType } from "./mana";
 
 export type Card = {
 	artUrl: string;
+	totalVariants: number;
 	flavorText: string;
 	manaCost: ManaType[];
 	oracleText: string;

@@ -1,11 +1,15 @@
 import { For, Setter, createSignal } from "solid-js";
+import { SetStoreFunction, produce } from "solid-js/store";
 import { parseMtgo } from "../services/mtgo-parser";
+import { fetchCardType } from "../services/scryfall";
+import { ListCard } from "../types/list-card";
 import Button from "./button";
 import ScryfallSearchBox from "./scryfall-searchbox";
 
 type SidebarProps = {
-	cardList: { name: string; number: number }[];
-	setCardList: Setter<{ name: string; number: number }[]>;
+	rawCardListInfo: Array<ListCard & { number: number }>;
+	cardList?: ListCard[];
+	setCardList: SetStoreFunction<ListCard[]>;
 	language: string;
 	setLanguage: Setter<string>;
 	pages: boolean[];
@@ -13,9 +17,6 @@ type SidebarProps = {
 
 export default function Sidebar(props: SidebarProps) {
 	const [rawCardListDialogOpen, setRawCardListDialogOpen] = createSignal(false);
-
-	const rawCardList = () =>
-		props.cardList.map(({ name, number }) => `${number} ${name}`).join("\n");
 
 	return (
 		<>
@@ -48,38 +49,21 @@ export default function Sidebar(props: SidebarProps) {
 						</select>
 					</div>
 					<div class="flex-1 overflow-y-auto flex flex-col gap-2">
-						<For each={props.cardList}>
+						<For each={props.rawCardListInfo}>
 							{(card) => (
 								<div class="text-white flex">
-									<span class="text-white text-lg my-auto overflow-hidden text-ellipsis whitespace-nowrap pl-1">{`${card.number} ${card.name}`}</span>
+									<span class="text-white text-lg my-auto overflow-hidden text-ellipsis whitespace-nowrap pl-1">
+										{card.number} {card.name}
+									</span>
 									<div class="ml-auto flex gap-2">
 										<Button
 											class="font-mono px-3"
 											onClick={() => {
-												props.setCardList((list) => {
-													const foundCardIndex = list.findIndex(
-														(c) => c.name == card.name
-													);
-													if (foundCardIndex >= 0) {
-														const foundCard = list[foundCardIndex];
-
-														if (foundCard.number <= 1) {
-															return list.filter((c) => c.name != card.name);
-														} else {
-															return list.map((c) => {
-																if (c.name == card.name) {
-																	return {
-																		...c,
-																		number: c.number - 1,
-																	};
-																} else {
-																	return c;
-																}
-															});
-														}
-													}
-													return list;
-												});
+												props.setCardList(
+													produce((list) => {
+														list.splice(list.indexOf(card), 1);
+													})
+												);
 											}}
 										>
 											-
@@ -87,24 +71,7 @@ export default function Sidebar(props: SidebarProps) {
 										<Button
 											class="font-mono px-3"
 											onClick={() => {
-												props.setCardList((list) => {
-													const foundCardIndex = list.findIndex(
-														(c) => c.name == card.name
-													);
-													if (foundCardIndex >= 0) {
-														return list.map((c) => {
-															if (c.name == card.name) {
-																return {
-																	...c,
-																	number: c.number + 1,
-																};
-															} else {
-																return c;
-															}
-														});
-													}
-													return list;
-												});
+												props.setCardList(props.cardList!.length, card);
 											}}
 										>
 											+
@@ -116,22 +83,17 @@ export default function Sidebar(props: SidebarProps) {
 					</div>
 
 					<ScryfallSearchBox
-						onAddCard={(cardName) =>
-							props.setCardList((prev) => {
-								if (prev.some((c) => c.name == cardName)) {
-									return prev.map((c) => {
-										if (c.name == cardName) {
-											return {
-												...c,
-												number: c.number + 1,
-											};
-										} else {
-											return c;
-										}
-									});
-								} else {
-									return [...prev, { name: cardName, number: 1 }];
-								}
+						onAddCard={({ name, type }) =>
+							props.setCardList((list) => {
+								// FIXME: variant is lost here
+								return [
+									...list,
+									{
+										name,
+										type,
+										language: props.language,
+									},
+								];
 							})
 						}
 					/>
@@ -173,10 +135,27 @@ export default function Sidebar(props: SidebarProps) {
 				<form
 					method="dialog"
 					class="flex flex-col h-full gap-2"
-					onSubmit={(e) => {
+					onSubmit={async (e) => {
 						e.preventDefault();
 						const rawCardList = (e.target as HTMLFormElement).cardList.value;
-						props.setCardList(parseMtgo(rawCardList));
+						const parsedList = parseMtgo(rawCardList);
+						const fullList = await Promise.all(
+							parsedList.flatMap(({ name, number }) =>
+								[...new Array(number)].map(async (_, i) => {
+									const type = await fetchCardType(name);
+									return {
+										name,
+										type,
+										language: props.language,
+										variant: type.toLowerCase().includes("basic land")
+											? i
+											: undefined,
+									};
+								})
+							)
+						);
+
+						props.setCardList(fullList);
 						setRawCardListDialogOpen(false);
 					}}
 				>
@@ -186,13 +165,13 @@ export default function Sidebar(props: SidebarProps) {
 					<textarea
 						name="cardList"
 						class="flex-1 w-full h-1/2 p-1 border rounded shadow-inner bg-stone-200"
-						value={rawCardList()}
+						value={props.rawCardListInfo.map((c) => c.number + " " + c.name)}
 					/>
 					<div class="w-full flex gap-2">
 						<Button
 							class="w-full !bg-stone-500"
 							type="reset"
-							onClick={(e) => setRawCardListDialogOpen(false)}
+							onClick={() => setRawCardListDialogOpen(false)}
 						>
 							Cancel
 						</Button>

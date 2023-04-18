@@ -66,13 +66,11 @@ export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
 export async function fetchCard(
 	title: string,
 	lang = "en",
-	variant?: number
+	variant: number = 0
 ): Promise<Card> {
-	const sanitizedTitle = title.split(" ").join("-");
-
 	const [frCards, enCards]: [any, any] = await Promise.all([
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=((!${sanitizedTitle}+lang:${lang})+or+(${sanitizedTitle}+t:token))+order:released`
+			`https://api.scryfall.com/cards/search/?q=((!"${title}" lang:${lang}) or ("${title}" t:token)) order:released direction:asc`
 		).catch((e) => {
 			console.error(e);
 			throw new CardError(
@@ -87,7 +85,7 @@ export async function fetchCard(
 			);
 		}),
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=((!${sanitizedTitle})+or+(${sanitizedTitle}+t:token))+order:released`
+			`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) order:released direction:asc`
 		).catch((e) => {
 			console.error(e);
 			throw new CardError(
@@ -132,6 +130,8 @@ export async function fetchCard(
 	const index = enCards.data.findIndex((c: any) => c.name == title);
 	const [fr, en] = [frCards.data[index], enCards.data[index]];
 
+	const variants = await fetchVariants(en["name"]);
+
 	if ("card_faces" in fr) {
 		throw new CardError(
 			`Card ${title} is a split card`,
@@ -144,7 +144,6 @@ export async function fetchCard(
 		);
 	}
 
-	const isBasicLand = en["type_line"].includes("Basic Land");
 	const colorsToUse: string[] = en["type_line"].toLowerCase().includes("land")
 		? fr["color_identity"]
 		: fr["colors"];
@@ -155,6 +154,7 @@ export async function fetchCard(
 		title: fr["printed_name"] || fr["name"],
 		manaCost,
 		artUrl: en["image_uris"]?.["art_crop"],
+		totalVariants: variants.length,
 		aspect: {
 			frame: parseCardFrame(en["type_line"]),
 			color: parseCardColor(
@@ -185,36 +185,39 @@ export async function fetchCard(
 		loyalty: en["loyalty"],
 	};
 
-	if (isBasicLand && variant) {
-		const variants = await fetchVariants(en["name"]);
-		return {
-			...card,
-			...variants[variant % variants.length],
-		} as Card;
-	} else {
-		return card;
-	}
+	return {
+		...card,
+		...variants[variant % variants.length],
+	} as Card;
 }
 
 export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
-	const sanitizedTitle = title.split(" ").join("-");
-
 	const response = await fetch(
-		`https://api.scryfall.com/cards/search/?q=!${sanitizedTitle}+unique:prints`
+		`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) unique:art order:released direction:asc`
 	).then((r) => r.json() as any);
 
 	return response.data
 		.map(
-			(card: any): Partial<Card> => ({
+			(card: any, i: number, arr: any[]): Partial<Card> => ({
 				artUrl: card["image_uris"]?.["art_crop"],
 				artist: card["artist"],
 				collectorNumber: card["collector_number"],
 				set: card["set"],
 				rarity: card["rarity"],
-				flavorText: card["flavor_text"],
+				totalVariants: arr.length,
 			})
 		)
 		.filter(Boolean);
+}
+
+export async function fetchCardType(name: string): Promise<string> {
+	const response = await fetch(
+		`https://api.scryfall.com/cards/search/?q=!"${name}"`
+	).then((r) => r.json() as any);
+
+	const [card] = response.data ?? [];
+
+	return card?.["type_line"] ?? "";
 }
 
 export async function searchCard(search: string) {

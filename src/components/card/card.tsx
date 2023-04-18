@@ -1,3 +1,4 @@
+import { Show } from "solid-js";
 import { getFrameAndBackgroundFromAspect } from "../../types/backgrounds";
 import { Card } from "../../types/card";
 import Art from "./art";
@@ -9,13 +10,15 @@ import Strength from "./strength";
 import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
-export default function CardComponent(card: Card) {
+export default function CardComponent(
+	card: Card & { onArtChange: (modifier: number) => void; variant?: number }
+) {
 	const [frame, background] = getFrameAndBackgroundFromAspect(card.aspect);
 
 	return (
 		<div
 			tabIndex={0}
-			class="rounded-xl print:rounded-none card hover:z-10 focus:transition-transform focus:scale-150 focus:z-20"
+			class="rounded-xl print:rounded-none card hover:z-10 focus:transition-transform group md:focus:scale-150 focus:z-20"
 			style={{
 				position: "relative",
 				display: "flex",
@@ -42,19 +45,43 @@ export default function CardComponent(card: Card) {
 				}}
 				src={background}
 			/>
-			{/* Black mask for the planeswalker card */}
-			{card.category == "Planeswalker" && (
-				<div
-					style={{
-						bottom: "5.5mm",
-						height: "2mm",
-						left: "0",
-						right: "0",
-						position: "absolute",
-						background: 'var(--card-bgc, "black")',
-					}}
-				/>
-			)}
+			{/* Black mask for the bottom of the card */}
+			<div
+				style={{
+					bottom: "5.5mm",
+					height: "2mm",
+					left: "0",
+					right: "0",
+					position: "absolute",
+					background: 'var(--card-bgc, "black")',
+				}}
+			/>
+			<Show when={card.totalVariants > 1}>
+				<div class="absolute bg-black/50 items-center top-[20mm] left-0 w-full z-10 grid grid-cols-3 py-2 opacity-0 print:hidden group-focus:opacity-100 md:hover:opacity-100 transition-opacity">
+					<Show when={(card.variant ?? 0) > 0} fallback={<div />}>
+						<button
+							onClick={() => card.onArtChange(-1)}
+							class="text-xl p-2 text-white filter shadow-sm text-bold"
+						>
+							{"◀️"}
+						</button>
+					</Show>
+					<span class="text-white mx-auto">
+						Variant {(card.variant ?? 0) + 1}/{card.totalVariants}
+					</span>
+					<Show
+						when={(card.variant ?? 0) < card.totalVariants - 1}
+						fallback={<div />}
+					>
+						<button
+							onClick={() => card.onArtChange(1)}
+							class="text-xl p-2 text-white filter shadow-sm text-bold"
+						>
+							{"▶️"}
+						</button>
+					</Show>
+				</div>
+			</Show>
 			{card.artUrl && <Art url={card.artUrl} category={card.category} />}
 			<img
 				style={{

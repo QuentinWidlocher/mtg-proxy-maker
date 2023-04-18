@@ -1,12 +1,11 @@
 import { createResource, createSignal } from "solid-js";
 import { match } from "ts-pattern";
 import { searchCard } from "../services/scryfall";
+import { ListCard } from "../types/list-card";
 
 type ScryfallSearchBoxProps = {
-	onAddCard: (card: string) => void;
+	onAddCard: (card: Pick<ListCard, "name" | "type">) => void;
 };
-
-const event = new MouseEvent("mousedown");
 
 export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 	const [search, setSearch] = createSignal<string | null>(null);
@@ -40,7 +39,11 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 			<select
 				class="bg-stone-200 rounded flex-1 pl-2 py-2"
 				onChange={(e) => {
-					props.onAddCard(e.currentTarget.value);
+					const [name, type] = e.currentTarget.value.split("|");
+					props.onAddCard({
+						name,
+						type,
+					});
 				}}
 			>
 				{match(results.state)
@@ -57,7 +60,7 @@ export default function ScryfallSearchBox(props: ScryfallSearchBoxProps) {
 								/>
 								{results()!.map((result) => (
 									<option
-										value={result.name}
+										value={`${result.name}|${result.type_line}`}
 										label={`${result.name} (${result.type_line})`}
 									/>
 								))}
