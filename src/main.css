@@ -99,7 +99,7 @@ body {
 		);
 		grid-template-rows: repeat(
 			3,
-			1fr
+			auto
 		);
 		grid-gap: var(--card-margin);
 	}

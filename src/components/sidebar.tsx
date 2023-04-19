@@ -8,11 +8,10 @@ import ScryfallSearchBox from "./scryfall-searchbox";
 
 type SidebarProps = {
 	rawCardListInfo: Array<ListCard & { number: number }>;
-	cardList?: ListCard[];
+	cardList: ListCard[];
 	setCardList: SetStoreFunction<ListCard[]>;
 	language: string;
 	setLanguage: Setter<string>;
-	pages: boolean[];
 };
 
 export default function Sidebar(props: SidebarProps) {
@@ -83,19 +82,17 @@ export default function Sidebar(props: SidebarProps) {
 					</div>
 
 					<ScryfallSearchBox
-						onAddCard={({ name, type }) =>
-							props.setCardList((list) => {
-								// FIXME: variant is lost here
-								return [
-									...list,
-									{
+						onAddCard={({ name, type }) => {
+							props.setCardList(
+								produce((list) => {
+									list.push({
 										name,
 										type,
 										language: props.language,
-									},
-								];
-							})
-						}
+									});
+								})
+							);
+						}}
 					/>
 					<Button
 						type="button"
@@ -114,17 +111,13 @@ export default function Sidebar(props: SidebarProps) {
 					<Button
 						type="button"
 						class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600 disabled:!bg-amber-400 disabled:!cursor-not-allowed disabled:!text-amber-100"
-						disabled={
-							props.pages.every((b) => !b) ||
-							!props.cardList ||
-							props.cardList.length <= 0
-						}
+						disabled={!props.cardList || props.cardList.length <= 0}
 						onClick={() => {
 							print();
 						}}
 					>
-						Print {props.pages.filter(Boolean).length} / {props.pages.length}{" "}
-						pages
+						Print {props.cardList.length} card
+						{props.cardList.length > 1 ? "s" : ""}
 					</Button>
 				</div>
 			</aside>

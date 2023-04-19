@@ -1,3 +1,4 @@
+import { createMediaQuery } from "@solid-primitives/media";
 import {
 	For,
 	Show,
@@ -116,10 +117,6 @@ export default function App() {
 			  )
 			: [];
 
-	const [openPages, setOpenPages] = createSignal<boolean[]>(
-		slicedCardElements().map(() => false)
-	);
-
 	return (
 		<main class="md:grid md:grid-rows-none md:grid-cols-[1fr_3fr] md:h-screen font-serif print:!block print:overflow-visible">
 			<Sidebar
@@ -128,61 +125,41 @@ export default function App() {
 				setCardList={setCardList}
 				language={language()}
 				setLanguage={setLanguage}
-				pages={openPages()}
 			/>
 
-			<div class="relative h-full grid grid-cols-1 overflow-y-hidden grid-rows-[auto_1fr] bg-stone-700 print:bg-white print:overflow-visible">
-				<div class="flex w-full print:hidden">
-					<button
-						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
-						onClick={() => {
-							setOpenPages(() =>
-								[...new Array(slicedCardElements().length)].fill(true)
-							);
-						}}
-					>
-						Open all pages
-					</button>
-					<button
-						class="flex-1 p-5 hover:bg-stone-600 text-xl text-white"
-						onClick={() => {
-							setOpenPages(() =>
-								[...new Array(slicedCardElements().length)].fill(false)
-							);
-						}}
-					>
-						Close all pages
-					</button>
-				</div>
-				<div class="overflow-y-auto pages print:h-auto print:overflow-y-visible">
-					<Show
-						when={false}
-						fallback={
-							<div class="card-grid">
-								<For each={cardList().value}>
-									{(card, j) => (
+			<div class="relative h-full overflow-y-auto bg-stone-700 print:bg-white print:overflow-visible pages">
+				<Show
+					when={false}
+					fallback={
+						<div class="card-grid print:m-auto">
+							<For each={cardList().value}>
+								{(card, j) => (
+									<div>
+										{[0, 1, 2].includes(j() % 9) && <div class="print:mt-10" />}
 										<FetchCard
 											{...card}
 											onVariantChange={(v) => {
 												setCardList(j(), "variant", v);
 											}}
 										/>
-									)}
-								</For>
-							</div>
-						}
-					>
-						<For each={slicedCardElements()}>
-							{(cards, i) => (
-								<div class="page bg-stone-600 print:bg-white">
-									<div class="card-grid md:p-5">
-										<For each={cards}>{FetchCard}</For>
+										{[6, 7, 8].includes(j() % 9) && <div class="print:mb-10" />}
+										{j() % 9 == 8 && <div class="break-after-page" />}
 									</div>
+								)}
+							</For>
+						</div>
+					}
+				>
+					<For each={slicedCardElements()}>
+						{(cards, i) => (
+							<div class="page bg-stone-600 print:bg-white">
+								<div class="card-grid md:p-5">
+									<For each={cards}>{FetchCard}</For>
 								</div>
-							)}
-						</For>
-					</Show>
-				</div>
+							</div>
+						)}
+					</For>
+				</Show>
 				<details class="min-h-[3rem] transition-all shadow-xl rounded-tr-lg fixed bottom-0 z-20 w-auto bg-stone-700 print:hidden">
 					<summary class="text-white p-5 cursor-pointer">Informations</summary>
 					<InfoTab />

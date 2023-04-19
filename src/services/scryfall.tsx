@@ -127,8 +127,21 @@ export async function fetchCard(
 		);
 	}
 
-	const index = enCards.data.findIndex((c: any) => c.name == title);
-	const [fr, en] = [frCards.data[index], enCards.data[index]];
+	const fr = frCards.data.find((c: any) => c.name == title);
+	const en = enCards.data.find((c: any) => c.name == title);
+
+	if (!fr || !en) {
+		throw new CardError(
+			title,
+			(
+				<>
+					<span>Card with name</span>
+					<span class="text-xl italic text-white">{title}</span>
+					<span>not found</span>
+				</>
+			)
+		);
+	}
 
 	const variants = await fetchVariants(en["name"]);
 
@@ -193,7 +206,7 @@ export async function fetchCard(
 
 export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
 	const response = await fetch(
-		`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) unique:art order:released direction:asc`
+		`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) unique:art prefer:newest`
 	).then((r) => r.json() as any);
 
 	return response.data
