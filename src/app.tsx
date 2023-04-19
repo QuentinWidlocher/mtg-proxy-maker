@@ -1,4 +1,3 @@
-import { createMediaQuery } from "@solid-primitives/media";
 import {
 	For,
 	Show,
@@ -43,8 +42,7 @@ export default function App() {
 		url.searchParams.get("language") ??
 		localStorage.getItem("language") ??
 		"en";
-	const initialRawCardList =
-		url.searchParams.get("cardList") ?? localStorage.getItem("cardList") ?? "";
+	const initialRawCardList = url.searchParams.get("cardList") ?? "";
 	const parsedCardList = parseMtgo(decodeURI(initialRawCardList));
 
 	const [language, setLanguage] = createSignal(rawLanguage);
@@ -92,8 +90,6 @@ export default function App() {
 			.join("\n");
 
 	createEffect(() => {
-		if (cardList().state != "ready") return;
-
 		const urlSearchParams = new URLSearchParams({
 			cardList: rawCardList(),
 			language: language(),
@@ -106,7 +102,6 @@ export default function App() {
 	});
 
 	createEffect(() => {
-		if (cardList().state != "ready") return;
 		setCardList((prev) => prev.map((c) => ({ ...c, language: language() })));
 	});
 

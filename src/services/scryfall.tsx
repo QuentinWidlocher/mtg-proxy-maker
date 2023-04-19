@@ -70,7 +70,7 @@ export async function fetchCard(
 ): Promise<Card> {
 	const [frCards, enCards]: [any, any] = await Promise.all([
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=((!"${title}" lang:${lang}) or ("${title}" t:token)) order:released direction:asc`
+			`https://api.scryfall.com/cards/search/?q=((!"${title}" lang:${lang}) or ("${title}" t:token)) -t:card order:released direction:asc`
 		).catch((e) => {
 			console.error(e);
 			throw new CardError(
@@ -85,7 +85,7 @@ export async function fetchCard(
 			);
 		}),
 		fetch(
-			`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) order:released direction:asc`
+			`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) -t:card order:released direction:asc`
 		).catch((e) => {
 			console.error(e);
 			throw new CardError(
@@ -206,21 +206,55 @@ export async function fetchCard(
 
 export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
 	const response = await fetch(
-		`https://api.scryfall.com/cards/search/?q=((!"${title}") or ("${title}" t:token)) unique:art prefer:newest`
+		`https://api.scryfall.com/cards/search/?q=!"${title}" unique:art prefer:newest`
 	).then((r) => r.json() as any);
 
 	return response.data
-		.map(
-			(card: any, i: number, arr: any[]): Partial<Card> => ({
+		.map((card: any, i: number, arr: any[]): Partial<Card> => {
+			let partial: Partial<Card> = {
 				artUrl: card["image_uris"]?.["art_crop"],
 				artist: card["artist"],
 				collectorNumber: card["collector_number"],
 				set: card["set"],
 				rarity: card["rarity"],
 				totalVariants: arr.length,
-			})
-		)
-		.filter(Boolean);
+			};
+
+			if (card["type_line"].toLowerCase().includes("token")) {
+				const manaTypes = (card["colors"] ?? card["color_identity"]).flatMap(
+					manaLetterToType
+				);
+				const manaCost = parseMana(card["mana_cost"]);
+
+				partial = {
+					...partial,
+					typeText: card["type_line"],
+					oracleText: card["printed_text"] || card["oracle_text"],
+					flavorText: card["flavor_text"],
+					power: card["power"],
+					toughness: card["toughness"],
+					aspect: {
+						frame: parseCardFrame(card["type_line"]),
+						color: parseCardColor(
+							manaTypes,
+							card["type_line"].toLowerCase().includes("artifact") &&
+								!card["type_line"].toLowerCase().includes("vehicle"),
+							manaCost
+								.filter((type) => type != "colorless" && type != "x")
+								.every(isBiType)
+						),
+						legendary:
+							card["frame_effects"]?.includes("legendary") ||
+							card["type_line"].toLowerCase().includes("legendary"),
+					},
+				};
+			}
+
+			return partial;
+		})
+		.filter((v: any) => {
+			return v?.artUrl != null;
+		});
 }
 
 export async function fetchCardType(name: string): Promise<string> {

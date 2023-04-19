@@ -46,6 +46,8 @@ export type CardBackground = typeof cardBackgrounds[number];
 export function parseCardFrame(engTypeText: string): CardFrame {
 	const lowercaseType = engTypeText.toLowerCase();
 
+	console.debug("lowercaseType", lowercaseType);
+
 	if (lowercaseType.includes("creature")) {
 		return "Creature";
 	} else if (lowercaseType.includes("basic land")) {
@@ -123,7 +125,7 @@ export function parseCardColor(
 
 	switch (coloredMana.length) {
 		case 0:
-			return "Colorless";
+			return "Artifact";
 		case 1:
 			if (isUnaryType(coloredMana[0])) {
 				return unaryManaToColor(coloredMana[0]);

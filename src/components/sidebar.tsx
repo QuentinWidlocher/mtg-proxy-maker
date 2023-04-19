@@ -158,7 +158,9 @@ export default function Sidebar(props: SidebarProps) {
 					<textarea
 						name="cardList"
 						class="flex-1 w-full h-1/2 p-1 border rounded shadow-inner bg-stone-200"
-						value={props.rawCardListInfo.map((c) => c.number + " " + c.name)}
+						value={props.rawCardListInfo
+							.map((c) => c.number + " " + c.name)
+							.join("\n")}
 					/>
 					<div class="w-full flex gap-2">
 						<Button
