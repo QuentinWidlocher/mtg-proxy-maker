@@ -102,7 +102,8 @@ export default function App() {
 	});
 
 	createEffect(() => {
-		setCardList((prev) => prev.map((c) => ({ ...c, language: language() })));
+		const lang = language();
+		setCardList((prev) => prev.map((c) => ({ ...c, language: lang })));
 	});
 
 	const slicedCardElements = () =>
