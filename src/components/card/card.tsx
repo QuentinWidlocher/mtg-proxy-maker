@@ -11,14 +11,15 @@ import TitleBar from "./title-bar";
 import TypeBar from "./type-bar";
 
 export default function CardComponent(
-  props: { card: Card } & { onArtChange?: (modifier: number) => void; variant?: number }
+  props: { card: Card, onClick?: () => void, selected?: boolean }
 ) {
   const frameAndBackground = () => getFrameAndBackgroundFromAspect(props.card.aspect);
 
   return (
     <div
       tabIndex={0}
-      class="rounded-xl print:rounded-none card hover:z-10 focus:transition-transform group md:focus:scale-150 focus:z-20"
+      onClick={props.onClick}
+      class="rounded-xl print:rounded-none card group outline-amber-500 print:outline-none"
       style={{
         position: "relative",
         display: "flex",
@@ -31,6 +32,8 @@ export default function CardComponent(
         "max-width": "var(--card-width)",
         "aspect-ratio": "63/88",
         border: "var(--card-bleed) solid var(--card-bgc)",
+        "outline-style": props.selected ? "solid" : "none",
+        "outline-width": props.selected ? "2px" : "0px",
         margin: "auto",
         "box-sizing": "content-box",
       }}
@@ -56,32 +59,6 @@ export default function CardComponent(
           background: 'var(--card-bgc, "black")',
         }}
       />
-      <Show when={props.card.totalVariants > 1}>
-        <div class="absolute bg-black/50 items-center top- left-0 w-full z-10 grid grid-cols-3 py-2 opacity-0 print:hidden group-focus:opacity-100 md:hover:opacity-100 transition-opacity">
-          <Show when={(props.variant ?? 0) > 0} fallback={<div />}>
-            <button
-              onClick={() => props.onArtChange?.(-1)}
-              class="text-xl p-2 text-white filter shadow-sm text-bold"
-            >
-              {"◀️"}
-            </button>
-          </Show>
-          <span class="text-white mx-auto">
-            Variant {(props.variant ?? 0) + 1}/{props.card.totalVariants}
-          </span>
-          <Show
-            when={(props.variant ?? 0) < props.card.totalVariants - 1}
-            fallback={<div />}
-          >
-            <button
-              onClick={() => props.onArtChange?.(1)}
-              class="text-xl p-2 text-white filter shadow-sm text-bold"
-            >
-              {"▶️"}
-            </button>
-          </Show>
-        </div>
-      </Show>
       {props.card.artUrl && <Art url={props.card.artUrl} category={props.card.category} />}
       <img
         style={{

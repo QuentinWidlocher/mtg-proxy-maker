@@ -2,7 +2,7 @@ import { match } from "ts-pattern";
 import { parseCardColor, parseCardFrame } from "../types/backgrounds";
 import { Card } from "../types/card";
 import { CardError } from "../types/error";
-import { ManaType, isBiType } from "../types/mana";
+import { ManaType, isBiType, ManaLetter, manaLetters, manaLetterToType as manaLetterToTypeMap } from "../types/mana";
 
 export function parseMana(manaCostString: string = ""): ManaType[] {
   const manaCost = manaCostString.match(/\{(.+?)\}/g) ?? [];
@@ -12,58 +12,30 @@ export function parseMana(manaCostString: string = ""): ManaType[] {
   });
 }
 
+export function serializeMana(manaCost: ManaType[]): string {
+  const manaWithoutColorless = manaCost.filter((type) => type != "colorless");
+
+  const withoutColorless = manaWithoutColorless.map((mana) => {
+    const entries = Object.entries(manaLetterToTypeMap) as [ManaLetter, ManaType][];
+    const letter = entries.find(([_letter, type]) => type == mana)?.[0];
+    if (letter) {
+      return `{${letter}}`;
+    }
+  })
+    .filter((v) => v != null)
+    .join("");
+  const colorless = manaCost.filter((type) => type == "colorless").length || '';
+
+  return colorless + withoutColorless;
+}
+
 export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {
-  switch (manaLetter) {
-    case "A":
-      return "action";
-    case "BA":
-      return "bonus-action";
-    case "W":
-      return "white";
-    case "U":
-      return "blue";
-    case "B":
-      return "black";
-    case "R":
-      return "red";
-    case "G":
-      return "green";
-    case "X":
-      return "x";
-    case "R/G":
-    case "G/R":
-      return "red-green";
-    case "R/U":
-    case "U/R":
-      return "red-blue";
-    case "R/B":
-    case "B/R":
-      return "red-black";
-    case "R/W":
-    case "W/R":
-      return "red-white";
-    case "G/U":
-    case "U/G":
-      return "green-blue";
-    case "G/B":
-    case "B/G":
-      return "green-black";
-    case "G/W":
-    case "W/G":
-      return "green-white";
-    case "U/B":
-    case "B/U":
-      return "blue-black";
-    case "U/W":
-    case "W/U":
-      return "blue-white";
-    case "B/W":
-    case "W/B":
-      return "black-white";
-    default:
-      return [...new Array(parseInt(manaLetter) || 0)].map(
-        () => "colorless" as const
-      );
+  if (manaLetters.includes(manaLetter as ManaLetter)) {
+    return manaLetterToTypeMap[manaLetter as ManaLetter];
+  } else {
+    return [...new Array(parseInt(manaLetter) || 0)].map(
+      () => "colorless" as const
+    );
   }
 }
 

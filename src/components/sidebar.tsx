@@ -1,9 +1,6 @@
 import { For, Setter, createSignal } from "solid-js";
-import { SetStoreFunction, produce } from "solid-js/store";
-import { parseMtgo } from "../services/mtgo-parser";
-import { fetchCardType } from "../services/scryfall";
-import { ListCard } from "../types/list-card";
 import Button from "./button";
+import InfoTab from "./info-tab";
 import ScryfallSearchBox from "./scryfall-searchbox";
 
 type SidebarProps = {
@@ -19,7 +16,7 @@ export default function Sidebar(props: SidebarProps) {
 
   return (
     <>
-      <aside class=" h-full shadow-xl overflow-y-hidden print:hidden w-full bg-stone-500">
+      <aside class="h-full shadow-xl overflow-y-hidden print:hidden w-full bg-stone-500">
         <div class="flex flex-col h-full gap-5 p-5">
           <div>
             <label for="language" class="text-white">
@@ -73,8 +70,11 @@ export default function Sidebar(props: SidebarProps) {
           >
             Print all cards
           </Button>
+          <InfoTab />
         </div>
+
       </aside>
+
       <dialog
         class="z-20 h-1/2 w-96 bg-stone-600 shadow-xl mt-52 rounded-lg backdrop:bg-black/50"
         open={rawCardListDialogOpen()}

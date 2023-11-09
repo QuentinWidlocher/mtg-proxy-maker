@@ -4,4 +4,6 @@ import "./main.css";
 
 import App from "./app";
 
-render(() => <App />, document.getElementById("root")!);
+render(() => {
+  return <App />;
+}, document.getElementById("root")!);

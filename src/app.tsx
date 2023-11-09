@@ -6,16 +6,14 @@ import {
   createSignal,
 } from "solid-js";
 import { createStore } from "solid-js/store";
+import Button from "./components/button";
 import CardComponent from "./components/card/card";
-import FetchCard from "./components/card/fetch-card";
+import EditCardForm from "./components/edit-card-form";
 import InfoTab from "./components/info-tab";
 import Sidebar from "./components/sidebar";
 import { parseMtgo } from "./services/mtgo-parser";
 import { fetchCard, fetchCardType } from "./services/scryfall";
-import { Card } from "./types/card";
-import { ListCard } from "./types/list-card";
-
-
+import { Card, getEmptyCard } from "./types/card";
 
 function createResourceStore<T extends {}>(
   initialValue: T,
@@ -54,6 +52,15 @@ export default function App() {
     [],
     () => getCardList(),
   );
+
+  const [selectedCardIndex, setSelectedCardIndex] = createSignal<number | null>(null);
+
+  const selectedCard = () => selectedCardIndex() !== null ? cardList().value[selectedCardIndex()!] : null;
+
+  const setSelectedCard = (fn: (prev: Card) => Card) => {
+    if (selectedCardIndex() == null || selectedCard() == null) return;
+    setCardList(selectedCardIndex()!, fn(selectedCard()!));
+  }
 
   async function fetchAndAddCard(name: string) {
     const fetchedCard = await fetchCard(
@@ -106,7 +113,7 @@ export default function App() {
   });
 
   return (
-    <main class="md:grid md:grid-rows-none md:grid-cols-[1fr_3fr] md:h-screen font-serif print:!block print:overflow-visible">
+    <main class="md:grid md:grid-rows-none md:grid-cols-[1fr_60rem_1fr] md:h-screen font-serif print:!block print:overflow-visible">
       <Sidebar
         onClearList={() => setCardList([])}
         language={language()}
@@ -117,7 +124,7 @@ export default function App() {
           setCardList(newList);
         }}
       />
-      <div class="relative h-full overflow-y-auto bg-stone-700 print:bg-white print:overflow-visible pages">
+      <div class="relative p-5 h-full overflow-y-auto bg-stone-700 print:bg-white print:overflow-visible pages">
         <div class="card-grid print:m-auto">
           <For each={cardList().value}>
             {(card, j) => (
@@ -125,18 +132,45 @@ export default function App() {
                 {[0, 1, 2].includes(j() % 9) && <div class="print:mt-10" />}
                 <CardComponent
                   card={card}
+                  onClick={() => { setSelectedCardIndex(j()); }}
+                  selected={j() == selectedCardIndex()}
                 />
                 {[6, 7, 8].includes(j() % 9) && <div class="print:mb-10" />}
                 {j() % 9 == 8 && <div class="break-after-page" />}
               </div>
             )}
           </For>
+
+          <Button class="grid place-content-center shadow-xl print:hidden rounded-xl hover:!bg-stone-800"
+            onClick={() => {
+              const nextIndex = cardList().value.length;
+              console.log(nextIndex);
+              setCardList((prev) => [...prev, getEmptyCard()]);
+              setSelectedCardIndex(nextIndex);
+            }}
+            style={{
+              position: "relative",
+              height: "auto",
+              width: "var(--card-width)",
+              "min-width": "var(--card-width)",
+              "max-width": "var(--card-width)",
+              "aspect-ratio": "63/88",
+              margin: "auto",
+              "box-sizing": "content-box",
+            }}
+          >Create a custom card</Button>
         </div>
-        <details class="min-h-[3rem] transition-all shadow-xl rounded-tr-lg fixed bottom-0 z-20 w-auto bg-stone-700 print:hidden">
-          <summary class="text-white p-5 cursor-pointer">Informations</summary>
-          <InfoTab />
-        </details>
       </div>
-    </main>
+      <Show when={selectedCard()}>
+        {(card) => <aside class="h-full overflow-y-hidden print:hidden">
+          <EditCardForm card={card} setCard={setSelectedCard} onRemoveCard={() => {
+            setCardList(cardList().value.filter((_, i) => i != selectedCardIndex()));
+            setSelectedCardIndex(null);
+
+          }} />
+        </aside>
+        }
+      </Show>
+    </main >
   );
 }

@@ -26,6 +26,41 @@ export const manaTypes = [
 
 export type ManaType = typeof manaTypes[number];
 
+export const manaLetters = ["A", "BA", "W", "U", "B", "R", "G", "X", "R/G", "G/R", "R/U", "U/R", "R/B", "B/R", "R/W", "W/R", "G/U", "U/G", "G/B", "B/G", "G/W", "W/G", "U/B", "B/U", "U/W", "W/U", "B/W", "W/B"] as const;
+export type ManaLetter = typeof manaLetters[number];
+
+export const manaLetterToType: Record<ManaLetter, ManaType> = {
+  "A": "action",
+  "BA": "bonus-action",
+  "W": "white",
+  "U": "blue",
+  "B": "black",
+  "R": "red",
+  "G": "green",
+  "X": "x",
+  "R/G": "red-green",
+  "G/R": "red-green",
+  "R/U": "red-blue",
+  "U/R": "red-blue",
+  "R/B": "red-black",
+  "B/R": "red-black",
+  "R/W": "red-white",
+  "W/R": "red-white",
+  "G/U": "green-blue",
+  "U/G": "green-blue",
+  "G/B": "green-black",
+  "B/G": "green-black",
+  "G/W": "green-white",
+  "W/G": "green-white",
+  "U/B": "blue-black",
+  "B/U": "blue-black",
+  "U/W": "blue-white",
+  "W/U": "blue-white",
+  "B/W": "black-white",
+  "W/B": "black-white"
+};
+
+
 export const manaTypeToSvg: Record<ManaType, string> = {
   colorless: symbols[0],
   x: symbols.X,
