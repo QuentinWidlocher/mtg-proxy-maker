@@ -1,0 +1,17 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 105" width="105" height="105">
+	<title>New Project</title>
+	<defs>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,36.516,-42.165,0,52.029,49.187)">
+			<stop offset="0" stop-color="#e06900"/>
+			<stop offset="1" stop-color="#e04b00"/>
+		</linearGradient>
+		<linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,84.921,-98.059,0,52.029,8)">
+			<stop offset="0" stop-color="#ff7800"/>
+			<stop offset="1" stop-color="#c94300"/>
+		</linearGradient>
+	</defs>
+	<style>
+		.s0 { fill: url(#g1);stroke: url(#g2);stroke-miterlimit:100;stroke-width: 5 } 
+	</style>
+	<path id="BAction" class="s0" d="m52 8l49.1 84.9h-98.1z"/>
+</svg>
