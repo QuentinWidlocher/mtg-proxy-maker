@@ -1,0 +1,16 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 436 435" width="436" height="435">
+	<title>RA</title>
+	<defs>
+		<filter x="-50%" y="-50%" width="200%" height="200%" id="f1" ><feDropShadow dx="-4.286263797015736e-16" dy="7" stdDeviation="15" flood-color="#ff00e2" flood-opacity=".5"/></filter>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,234.554,-234.554,0,218,116.967)">
+			<stop offset="0" stop-color="#ff4bba"/>
+			<stop offset="1" stop-color="#bb29f0"/>
+		</linearGradient>
+	</defs>
+	<style>
+		.s0 { filter: url(#f1);fill: url(#g1);stroke: #ff5ded;paint-order:stroke fill markers;stroke-miterlimit:100;stroke-width: 40 } 
+	</style>
+	<g id="RA">
+		<path id="-e-Shape 1" class="s0" d="m380.9 218l-116.8 46-46.1 116.8-46.1-116.8-116.8-46 116.8-46.1 46.1-116.8 46.1 116.8z"/>
+	</g>
+</svg>

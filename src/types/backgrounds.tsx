@@ -47,8 +47,6 @@ export type CardBackground = typeof cardBackgrounds[number];
 export function parseCardFrame(engTypeText: string): CardFrame {
   const lowercaseType = engTypeText.toLowerCase();
 
-  console.debug("lowercaseType", lowercaseType);
-
   if (lowercaseType.includes("creature")) {
     return "Creature";
   } else if (lowercaseType.includes("basic land")) {

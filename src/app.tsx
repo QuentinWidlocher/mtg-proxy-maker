@@ -8,6 +8,7 @@ import {
 import { createStore } from "solid-js/store";
 import Button from "./components/button";
 import CardComponent from "./components/card/card";
+import CardVerso from "./components/card/card-verso";
 import EditCardForm from "./components/edit-card-form";
 import InfoTab from "./components/info-tab";
 import Sidebar from "./components/sidebar";
@@ -38,6 +39,12 @@ function createResourceStore<T extends {}>(
   return [signal, setStore] as const;
 }
 
+export const [defaultVerso, setDefaultVerso] = createSignal<string>(localStorage.getItem('defaultVerso') || '');
+
+createEffect(function syncWithLocalStorage() {
+  localStorage.setItem("defaultVerso", defaultVerso());
+});
+
 export default function App() {
   const url = new URL(window.location.href);
 
@@ -47,6 +54,7 @@ export default function App() {
     "en";
 
   const [language, setLanguage] = createSignal(rawLanguage);
+  const [printVersos, setPrintVersos] = createSignal(localStorage.getItem("printVersos") == 'true');
 
   const [cardList, setCardList] = createResourceStore<Card[]>(
     [],
@@ -76,14 +84,13 @@ export default function App() {
 
     return Promise.all(
       parsedList.flatMap(({ name, number }) =>
-        [...new Array(number)].map(async (_, i) => {
-          return fetchCard(
+        [...new Array(number)].map(async (_, i) =>
+          fetchCard(
             name,
             language(),
             // todo implement variant only for basic lands
             i
-          );
-        })
+          ))
       ));
   }
 
@@ -105,6 +112,7 @@ export default function App() {
       localStorage.setItem("cardList", JSON.stringify(cardList().value));
     }
     localStorage.setItem("language", language());
+    localStorage.setItem("printVersos", printVersos() ? 'true' : 'false');
   });
 
   createEffect(function updateCardsLang() {
@@ -113,38 +121,77 @@ export default function App() {
   });
 
   return (
-    <main class="md:grid md:grid-rows-none md:grid-cols-[1fr_60rem_1fr] md:h-screen font-serif print:!block print:overflow-visible">
+    <main class="md:grid md:grid-rows-none md:grid-cols-[1fr_50rem_1fr] md:h-screen font-serif print:!block print:overflow-visible">
       <Sidebar
-        onClearList={() => setCardList([])}
+        onClearList={() => {
+          setCardList([]);
+          setSelectedCardIndex(null);
+        }}
         language={language()}
         setLanguage={setLanguage}
+        printVersos={printVersos()}
+        setPrintVersos={setPrintVersos}
         onAddCard={fetchAndAddCard}
         onRawListImport={async (rawList) => {
           const newList = await getNewListFromMTGO(rawList);
           setCardList(newList);
+          setSelectedCardIndex(null);
         }}
       />
-      <div class="relative p-5 h-full overflow-y-auto bg-stone-700 print:bg-white print:overflow-visible pages">
+      <div class="relative p-5 print:p-0 h-full overflow-y-auto bg-stone-700 print:bg-white print:overflow-visible pages">
         <div class="card-grid print:m-auto">
           <For each={cardList().value}>
             {(card, j) => (
-              <div>
-                {[0, 1, 2].includes(j() % 9) && <div class="print:mt-10" />}
-                <CardComponent
-                  card={card}
-                  onClick={() => { setSelectedCardIndex(j()); }}
-                  selected={j() == selectedCardIndex()}
-                />
-                {[6, 7, 8].includes(j() % 9) && <div class="print:mb-10" />}
-                {j() % 9 == 8 && <div class="break-after-page" />}
-              </div>
+              <>
+                <div>
+                  {[0, 1, 2].includes(j() % 9) && <div class="print:mt-5" />}
+                  <CardComponent
+                    card={card}
+                    onClick={() => { setSelectedCardIndex(j()); }}
+                    selected={j() == selectedCardIndex()}
+                  />
+                  {j() % 9 == 8 && <div class="break-after-page" />}
+                </div>
+                {(j() % 9 != 8 && j() == cardList().value.length - 1) ?
+                  [...new Array(8 - (j() % 9))].map((_, i) =>
+                    <div class="hidden print:block">
+                      <CardVerso verso={undefined} />
+                      {i == 7 - (j() % 9) && <div class="break-after-page" />}
+                    </div>
+                  ) : null}
+
+                {printVersos() && (j() % 9 == 8 || j() == cardList().value.length - 1) &&
+                  (
+                    <>
+                      {[...new Array(3)].map((_, i) => i).reverse().map((i) =>
+                        <div class="hidden print:block">
+                          <div class="print:mt-5" />
+                          <CardVerso verso={cardList().value[j() - (j() % 9) + i]?.verso} />
+                        </div>
+                      )}
+
+                      {[...new Array(3)].map((_, i) => i).reverse().map((i) =>
+                        <div class="hidden print:block">
+                          <CardVerso verso={cardList().value[j() - (j() % 9) + i + 3]?.verso} />
+                        </div>
+                      )}
+
+                      {[...new Array(3)].map((_, i) => i).reverse().map((i) =>
+                        <div class="hidden print:block">
+                          <CardVerso verso={cardList().value[j() - (j() % 9) + i + 6]?.verso} />
+                          {i % 3 == 2 && <div class="break-after-page" />}
+                        </div>
+                      )}
+                    </>
+                  )
+                }
+              </>
             )}
           </For>
 
           <Button class="grid place-content-center shadow-xl print:hidden rounded-xl hover:!bg-stone-800"
             onClick={() => {
               const nextIndex = cardList().value.length;
-              console.log(nextIndex);
               setCardList((prev) => [...prev, getEmptyCard()]);
               setSelectedCardIndex(nextIndex);
             }}
@@ -163,11 +210,22 @@ export default function App() {
       </div>
       <Show when={selectedCard()}>
         {(card) => <aside class="h-full overflow-y-hidden print:hidden">
-          <EditCardForm card={card} setCard={setSelectedCard} onRemoveCard={() => {
-            setCardList(cardList().value.filter((_, i) => i != selectedCardIndex()));
-            setSelectedCardIndex(null);
+          <EditCardForm
+            card={card}
+            setCard={setSelectedCard}
+            onRemoveCard={() => {
+              setCardList(cardList().value.filter((_, i) => i != selectedCardIndex()));
+              setSelectedCardIndex(null);
+            }}
+            onDuplicateCard={() => {
+              setCardList((prev) => [...prev, { ...card() }]);
+              setSelectedCardIndex(cardList().value.length);
+            }}
+            onSetCardDefaultVerso={(url) => {
+              setDefaultVerso(url);
+            }}
+          />
 
-          }} />
         </aside>
         }
       </Show>

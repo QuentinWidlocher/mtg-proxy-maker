@@ -1,17 +1,16 @@
-<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 105 105" width="105" height="105">
-	<title>New Project</title>
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 396 396" width="396" height="396">
+	<title>A</title>
 	<defs>
-		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,157,-157,0,52,24.5)">
-			<stop offset="0" stop-color="#30bb61"/>
-			<stop offset="1" stop-color="#000000"/>
-		</linearGradient>
-		<linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,100,-100,0,52,2)">
-			<stop offset="0" stop-color="#2cda6a"/>
-			<stop offset="1" stop-color="#1d5631"/>
+		<filter x="-50%" y="-50%" width="200%" height="200%" id="f1" ><feDropShadow dx="-4.286263797015736e-16" dy="7" stdDeviation="15" flood-color="#18b500" flood-opacity="1"/></filter>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(0,248.497,-248.497,0,198,91.008)">
+			<stop offset="0" stop-color="#32ba1d"/>
+			<stop offset="1" stop-color="#257f3a"/>
 		</linearGradient>
 	</defs>
 	<style>
-		.s0 { fill: url(#g1);stroke: url(#g2);stroke-miterlimit:100;stroke-width: 5 } 
+		.s0 { filter: url(#f1);fill: url(#g1);stroke: #2dcb15;paint-order:stroke fill markers;stroke-miterlimit:100;stroke-width: 50 } 
 	</style>
-	<path id="Action" class="s0" d="m52 102c-27.7 0-50-22.3-50-50 0-27.7 22.3-50 50-50 27.7 0 50 22.3 50 50 0 27.7-22.3 50-50 50zm0 0c-27.7 0-50-22.3-50-50 0-27.7 22.3-50 50-50 27.7 0 50 22.3 50 50 0 27.7-22.3 50-50 50z"/>
+	<g id="A">
+		<path id="-e-Symbol" class="s0" d="m198 370.6c-95.4 0-172.6-77.2-172.6-172.6 0-95.4 77.2-172.6 172.6-172.6 95.4 0 172.6 77.2 172.6 172.6 0 95.4-77.2 172.6-172.6 172.6z"/>
+	</g>
 </svg>

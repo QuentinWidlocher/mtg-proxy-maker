@@ -4,18 +4,42 @@ import { parseMana, serializeMana } from "../services/scryfall";
 import { cardFrames, cardColors } from "../types/backgrounds";
 import { Card } from "../types/card";
 import Button from "./button";
+import CardVerso from "./card/card-verso";
+import { defaultVerso, setDefaultVerso } from "../app";
+
+function ManaInput(props: {
+  value: Card['manaCost'],
+  setValue: (value: Card['manaCost']) => void
+}) {
+  const [rawManaCost, setRawManaCost] = createSignal("");
+
+  createEffect(function syncMana() {
+    const serialized = serializeMana(props.value)
+    setRawManaCost(serialized)
+  })
+
+  createEffect(function syncMana() {
+    const parsed = parseMana(rawManaCost())
+    console.log(props.value.join(''), parsed.join(''))
+    if (props.value.join('') != parsed.join('')) {
+      props.setValue(parsed)
+    }
+  })
+
+  return <input
+    name="mana"
+    class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+    onInput={(e) => setRawManaCost(e.currentTarget.value)} value={rawManaCost()}
+  />
+}
 
 export default function EditCardForm(props: {
   card: Accessor<Card>,
   setCard: (fn: (prev: Card) => Card) => void,
   onRemoveCard: () => void
+  onDuplicateCard: () => void
+  onSetCardDefaultVerso: (verso: string) => void
 }) {
-  const [rawManaCost, setRawManaCost] = createSignal(serializeMana(props.card().manaCost));
-
-  function setManaCost(manaCost: string) {
-    setRawManaCost(manaCost);
-    props.setCard(c => ({ ...c, manaCost: parseMana(manaCost) }))
-  }
 
   createEffect(() => {
     console.log(props.card())
@@ -23,11 +47,20 @@ export default function EditCardForm(props: {
 
   return <main class="bg-stone-500 grid grid-rows-[auto_1fr] h-full">
     <section class="grid place-content-center p-5">
-      <Button class="mb-3" onClick={() => props.onRemoveCard()}>Remove this card</Button>
-      <CardComponent card={props.card()} />
+      <div class="flex mb-3 mx-auto gap-5">
+        <Button onClick={() => props.onRemoveCard()}>Remove this card</Button>
+        <Button onClick={() => props.onDuplicateCard()}>Duplicate this card</Button>
+      </div>
+      <div class="flex gap-3">
+        <CardComponent card={props.card()} />
+        <Show when={props.card().verso}>
+          <CardVerso verso={props.card().verso} />
+        </Show>
+      </div>
     </section>
     <section class="p-5 overflow-y-auto">
       <form class="flex flex-col gap-10">
+
         <fieldset class="flex flex-col gap-5 border-white border p-5">
           <legend class="text-white">Aspect</legend>
           <div class="flex flex-col gap-1">
@@ -79,11 +112,7 @@ export default function EditCardForm(props: {
           </div>
           <div class="flex flex-col gap-1">
             <label for="mana" class="text-white">Mana cost</label>
-            <input
-              name="mana"
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
-              onInput={(e) => setManaCost(e.currentTarget.value)} value={rawManaCost()}
-            />
+            <ManaInput value={props.card().manaCost} setValue={(m) => props.setCard(p => ({ ...p, manaCost: m }))} />
           </div>
           <div class="flex flex-col gap-1">
             <label for="picture" class="text-white">Picture URL</label>
@@ -152,7 +181,7 @@ export default function EditCardForm(props: {
           </div>
 
           <div class="flex gap-5">
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 flex-1">
               <label for="type" class="text-white">Power</label>
               <input
                 name="type"
@@ -160,7 +189,7 @@ export default function EditCardForm(props: {
                 onInput={(e) => props.setCard(p => ({ ...p, power: e.currentTarget.value }))} value={props.card().power ?? ""}
               />
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1 flex-1">
               <label for="type" class="text-white">Toughness</label>
               <input
                 name="type"
@@ -169,8 +198,101 @@ export default function EditCardForm(props: {
               />
             </div>
           </div>
+        </fieldset>
 
+        <fieldset class="flex flex-col gap-5 border-white border p-5">
+          <legend class="text-white">Print data</legend>
 
+          <div class="flex gap-5">
+            <div class="flex flex-col gap-1 flex-1">
+              <label for="collector-number" class="text-white">Collector Number</label>
+              <input
+                name="collector-number"
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                onInput={(e) => props.setCard(p => ({ ...p, collectorNumber: e.currentTarget.value }))} value={props.card().collectorNumber ?? ""}
+              />
+            </div>
+            <div class="flex flex-col gap-1 flex-1">
+              <label for="rarity" class="text-white">Rarity</label>
+              <input
+                name="rarity"
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                onInput={(e) => props.setCard(p => ({ ...p, rarity: e.currentTarget.value }))} value={props.card().rarity ?? ""}
+              />
+            </div>
+          </div>
+          <div class="flex gap-5">
+            <div class="flex flex-col gap-1 flex-1">
+              <label for="set" class="text-white">Set</label>
+              <input
+                name="set"
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                onInput={(e) => props.setCard(p => ({ ...p, set: e.currentTarget.value }))} value={props.card().set ?? ""}
+              />
+            </div>
+            <div class="flex flex-col gap-1 flex-1">
+              <label for="lang" class="text-white">Language</label>
+              <input
+                name="lang"
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                onInput={(e) => props.setCard(p => ({ ...p, lang: e.currentTarget.value }))} value={props.card().lang ?? ""}
+              />
+            </div>
+
+          </div>
+
+          <div class="flex flex-col gap-1 flex-1">
+            <label for="artist" class="text-white">Artist name</label>
+            <input
+              name="artist"
+              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              onInput={(e) => props.setCard(p => ({ ...p, artist: e.currentTarget.value }))} value={props.card().artist ?? ""}
+            />
+          </div>
+        </fieldset>
+
+        <fieldset class="flex flex-col gap-5 border-white border p-5">
+          <legend class="text-white">Back of card</legend>
+
+          <Show when={!props.card().verso || typeof props.card().verso == 'string'}>
+            <div class="flex flex-col gap-1">
+              <label for="picture" class="text-white">Picture URL</label>
+              <input
+                name="picture"
+                value={(props.card().verso ?? "") as string}
+                onInput={(e) => props.setCard(p => ({ ...p, verso: e.currentTarget.value }))}
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              />
+              <input
+                name="picture"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.currentTarget.files?.item(0)
+                  if (!file) return
+                  const reader = new FileReader()
+                  reader.addEventListener('load', (e) => {
+                    const url = e.target?.result
+                    if (typeof url != 'string') return
+
+                    props.setCard(p => ({ ...p, verso: url }))
+                  });
+                  reader.readAsDataURL(file)
+                }}
+                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              />
+              <Button
+                type="button"
+                disabled={defaultVerso() == props.card().verso || props.card().verso == 'default'}
+                onClick={() => {
+                  const url = props.card().verso;
+                  props.setCard(p => ({ ...p, verso: 'default' }))
+                  setDefaultVerso(url as string)
+                }}>
+                Make this back the default one
+              </Button>
+            </div>
+          </Show>
         </fieldset>
       </form>
     </section>

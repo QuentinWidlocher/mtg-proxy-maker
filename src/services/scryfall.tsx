@@ -14,9 +14,9 @@ export function parseMana(manaCostString: string = ""): ManaType[] {
 
 export function serializeMana(manaCost: ManaType[]): string {
   const manaWithoutColorless = manaCost.filter((type) => type != "colorless");
+  const entries = Object.entries(manaLetterToTypeMap) as [ManaLetter, ManaType][];
 
   const withoutColorless = manaWithoutColorless.map((mana) => {
-    const entries = Object.entries(manaLetterToTypeMap) as [ManaLetter, ManaType][];
     const letter = entries.find(([_letter, type]) => type == mana)?.[0];
     if (letter) {
       return `{${letter}}`;
@@ -175,6 +175,7 @@ export async function fetchCard(
   };
 
   return {
+    verso: 'default',
     ...card,
     ...variants[variant % variants.length],
   } as Card;

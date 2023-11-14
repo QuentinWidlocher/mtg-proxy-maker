@@ -1,7 +1,7 @@
 import { createEffect, mergeProps } from "solid-js";
 import { JSX } from "solid-js/jsx-runtime";
 import { Card } from "../../types/card";
-import { ManaType, manaTypeToSvg, manaTypes } from "../../types/mana";
+import { ManaType, manaTypeToSvg, manaTypes, customManaTypes } from "../../types/mana";
 import { symbols } from "../../types/symbols";
 
 type TitleBarProps = {
@@ -25,7 +25,7 @@ const style: Record<Card["category"], JSX.CSSProperties> = {
   },
 };
 
-function Mana({ src }: { src: string }) {
+function Mana({ src, name }: { src: string, name: ManaType }) {
   return (
     <img
       style={{
@@ -33,8 +33,8 @@ function Mana({ src }: { src: string }) {
         height: "3mm",
         "margin-left": "0.3mm",
         "margin-bottom": "0.8mm",
-        "border-radius": "100%",
-        // "box-shadow": "-0.5px 1px 0px black",
+        "border-radius": customManaTypes.includes(name) ? "0" : '100%',
+        "box-shadow": customManaTypes.includes(name) ? "" : '-0.5px 1px 0px black',
       }}
       src={src}
     />
@@ -99,10 +99,10 @@ export default function TitleBar(p: TitleBarProps) {
           }}
         >
           {colorlessMana().length > 0 && colorlessMana().length in symbols && (
-            <Mana src={symbols[colorlessMana().length as keyof typeof symbols]} />
+            <Mana src={symbols[colorlessMana().length as keyof typeof symbols]} name='colorless' />
           )}
-          {coloredMana().map((mana, i) => (
-            <Mana src={manaTypeToSvg[mana]} />
+          {coloredMana().map((mana) => (
+            <Mana src={manaTypeToSvg[mana]} name={mana} />
           ))}
         </div>
       )}

@@ -66,6 +66,13 @@ import Y from "../assets/images/card-symbols/Y.svg";
 import Z from "../assets/images/card-symbols/Z.svg";
 import Action from "../assets/images/card-symbols/Action.svg";
 import BonusAction from "../assets/images/card-symbols/BonusAction.svg";
+import Reaction from "../assets/images/card-symbols/Reaction.svg";
+import D4 from "../assets/images/card-symbols/D4.png";
+import D6 from "../assets/images/card-symbols/D6.png";
+import D8 from "../assets/images/card-symbols/D8.png";
+import D10 from "../assets/images/card-symbols/D10.png";
+import D12 from "../assets/images/card-symbols/D12.png";
+import D20 from "../assets/images/card-symbols/D20.png";
 
 export const symbols = {
   0: zero,
@@ -131,11 +138,18 @@ export const symbols = {
   G,
   UR,
   WP,
+  Reaction,
   "2B": twoB,
   "2G": twoG,
   "2R": twoR,
   "2U": twoU,
   "2W": twoW,
+  "D4": D4,
+  "D6": D6,
+  "D8": D8,
+  "D10": D10,
+  "D12": D12,
+  "D20": D20,
 } as const;
 
 export type GameSymbol = keyof typeof symbols;

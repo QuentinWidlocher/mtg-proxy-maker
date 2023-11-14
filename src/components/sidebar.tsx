@@ -6,6 +6,8 @@ import ScryfallSearchBox from "./scryfall-searchbox";
 type SidebarProps = {
   language: string;
   setLanguage: Setter<string>;
+  printVersos: boolean;
+  setPrintVersos: Setter<boolean>;
   onAddCard: (cardName: string) => void;
   onClearList: () => void;
   onRawListImport: (rawCardList: string) => void;
@@ -70,6 +72,21 @@ export default function Sidebar(props: SidebarProps) {
           >
             Print all cards
           </Button>
+
+          <div class="flex flex-col gap-1">
+            <label for="print-versos" class="text-white">
+              <input
+                name="print-versos"
+                type="checkbox"
+                class="flex-1 mr-3"
+                onChange={(e) => props.setPrintVersos(e.currentTarget.checked)}
+                checked={props.printVersos}
+              />
+
+              Print card backs
+            </label>
+          </div>
+
           <InfoTab />
         </div>
 

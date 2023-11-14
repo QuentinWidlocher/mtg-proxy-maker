@@ -20,18 +20,23 @@ export const manaTypes = [
   "blue-black",
   "blue-white",
   "black-white",
-  "action",
-  "bonus-action",
 ] as const;
 
-export type ManaType = typeof manaTypes[number];
+export const customManaTypes = [
+  "action",
+  "bonus-action",
+  "reaction",
+] as const;
 
-export const manaLetters = ["A", "BA", "W", "U", "B", "R", "G", "X", "R/G", "G/R", "R/U", "U/R", "R/B", "B/R", "R/W", "W/R", "G/U", "U/G", "G/B", "B/G", "G/W", "W/G", "U/B", "B/U", "U/W", "W/U", "B/W", "W/B"] as const;
+export type ManaType = typeof manaTypes[number] | typeof customManaTypes[number];
+
+export const manaLetters = ["Act", "BAct", "React", "W", "U", "B", "R", "G", "X", "R/G", "G/R", "R/U", "U/R", "R/B", "B/R", "R/W", "W/R", "G/U", "U/G", "G/B", "B/G", "G/W", "W/G", "U/B", "B/U", "U/W", "W/U", "B/W", "W/B"] as const;
 export type ManaLetter = typeof manaLetters[number];
 
 export const manaLetterToType: Record<ManaLetter, ManaType> = {
-  "A": "action",
-  "BA": "bonus-action",
+  "Act": "action",
+  "BAct": "bonus-action",
+  "React": "reaction",
   "W": "white",
   "U": "blue",
   "B": "black",
@@ -81,11 +86,12 @@ export const manaTypeToSvg: Record<ManaType, string> = {
   "black-white": symbols.WB,
   action: symbols.Action,
   "bonus-action": symbols.BonusAction,
+  reaction: symbols.Reaction,
 };
 
 export type UnaryManaType = Extract<
   ManaType,
-  "colorless" | "x" | "red" | "green" | "blue" | "black" | "white" | "action" | "bonus-action"
+  "colorless" | "x" | "red" | "green" | "blue" | "black" | "white" | "action" | "bonus-action" | "reaction"
 >;
 export type BiManaType = Exclude<ManaType, UnaryManaType>;
 

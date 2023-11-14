@@ -3,24 +3,21 @@ import { ManaType } from "./mana";
 
 export type Card = {
   artUrl: string;
-  totalVariants: number;
+  artist?: string;
+  aspect: { frame: CardFrame; color: CardColor; legendary: boolean; };
+  collectorNumber?: string;
   flavorText: string;
+  lang?: string;
   manaCost: ManaType[];
   oracleText: string;
   power?: string;
+  rarity?: string;
+  set?: string;
   title: string;
+  totalVariants: number;
   toughness?: string;
   typeText: string;
-  aspect: {
-    frame: CardFrame;
-    color: CardColor;
-    legendary: boolean;
-  };
-  collectorNumber?: string;
-  set?: string;
-  rarity?: string;
-  artist?: string;
-  lang?: string;
+  verso?: 'default' | string | Card;
 } & (
     | {
       category: "Regular";
