@@ -24,9 +24,13 @@ export function serializeMana(manaCost: ManaType[]): string {
   })
     .filter((v) => v != null)
     .join("");
-  const colorless = manaCost.filter((type) => type == "colorless").length || '';
+  const colorlessCount = manaCost.filter((type) => type == "colorless").length
 
-  return colorless + withoutColorless;
+  if (colorlessCount > 0) {
+    return `{${colorlessCount}}${withoutColorless}`;
+  } else {
+    return withoutColorless;
+  }
 }
 
 export function manaLetterToType(manaLetter: string): ManaType | ManaType[] {

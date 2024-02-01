@@ -20,7 +20,6 @@ function ManaInput(props: {
 
   createEffect(function syncMana() {
     const parsed = parseMana(rawManaCost())
-    console.log(props.value.join(''), parsed.join(''))
     if (props.value.join('') != parsed.join('')) {
       props.setValue(parsed)
     }
@@ -41,25 +40,23 @@ export default function EditCardForm(props: {
   onSetCardDefaultVerso: (verso: string) => void
 }) {
 
-  createEffect(() => {
-    console.log(props.card())
-  })
-
   return <main class="bg-stone-500 grid grid-rows-[auto_1fr] h-full">
-    <section class="grid place-content-center p-5">
+    <section class="relative grid place-content-center p-5 border-stone-600 border-b-4 @container">
       <div class="flex mb-3 mx-auto gap-5">
         <Button onClick={() => props.onRemoveCard()}>Remove this card</Button>
         <Button onClick={() => props.onDuplicateCard()}>Duplicate this card</Button>
       </div>
-      <div class="flex gap-3">
+      <div class="flex overflow-x-hidden gap-3">
         <CardComponent card={props.card()} />
         <Show when={props.card().verso}>
-          <CardVerso verso={props.card().verso} />
+          <div class="absolute @sm:relative mx-auto @sm:mx-none left-0 w-full @sm:w-auto z-10 transition-opacity opacity-0 @sm:opacity-100 hover:opacity-100">
+            <CardVerso verso={props.card().verso} />
+          </div>
         </Show>
       </div>
     </section>
-    <section class="p-5 overflow-y-auto">
-      <form class="flex flex-col gap-10">
+    <section class="@container p-2 @xl:p-5 overflow-y-auto overflow-x-hidden">
+      <form class="flex flex-col gap-5">
 
         <fieldset class="flex flex-col gap-5 border-white border p-5">
           <legend class="text-white">Aspect</legend>
@@ -80,6 +77,7 @@ export default function EditCardForm(props: {
                 name="legendary"
                 type="checkbox"
                 class="flex-1 mr-3"
+                checked={props.card().aspect.legendary}
                 onChange={(e) => props.setCard(p => ({ ...p, aspect: { ...p.aspect, legendary: e.currentTarget.checked as any } }))}
               />
 
@@ -180,7 +178,7 @@ export default function EditCardForm(props: {
             />
           </div>
 
-          <div class="flex gap-5">
+          <div class="flex flex-wrap gap-5">
             <div class="flex flex-col gap-1 flex-1">
               <label for="type" class="text-white">Power</label>
               <input
@@ -203,7 +201,7 @@ export default function EditCardForm(props: {
         <fieldset class="flex flex-col gap-5 border-white border p-5">
           <legend class="text-white">Print data</legend>
 
-          <div class="flex gap-5">
+          <div class="flex flex-wrap gap-5">
             <div class="flex flex-col gap-1 flex-1">
               <label for="collector-number" class="text-white">Collector Number</label>
               <input
@@ -221,7 +219,7 @@ export default function EditCardForm(props: {
               />
             </div>
           </div>
-          <div class="flex gap-5">
+          <div class="flex flex-wrap gap-5">
             <div class="flex flex-col gap-1 flex-1">
               <label for="set" class="text-white">Set</label>
               <input
