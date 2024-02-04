@@ -3,7 +3,6 @@ import CardComponent from "./card/card";
 import { parseMana, serializeMana } from "../services/scryfall";
 import { cardFrames, cardColors } from "../types/backgrounds";
 import { Card } from "../types/card";
-import Button from "./button";
 import CardVerso from "./card/card-verso";
 import { defaultVerso, setDefaultVerso } from "../app";
 
@@ -27,7 +26,7 @@ function ManaInput(props: {
 
   return <input
     name="mana"
-    class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+    class="input"
     onInput={(e) => setRawManaCost(e.currentTarget.value)} value={rawManaCost()}
   />
 }
@@ -42,9 +41,9 @@ export default function EditCardForm(props: {
 
   return <main class="bg-stone-500 grid grid-rows-[auto_1fr] h-full">
     <section class="relative grid place-content-center p-5 border-stone-600 border-b-4 @container">
-      <div class="flex mb-3 mx-auto gap-5">
-        <Button onClick={() => props.onRemoveCard()}>Remove this card</Button>
-        <Button onClick={() => props.onDuplicateCard()}>Duplicate this card</Button>
+      <div class="flex mb-3 mx-auto gap-3">
+        <button class="btn btn-secondary flex-1" onClick={() => props.onRemoveCard()}>Remove this card</button>
+        <button class="btn btn-secondary flex-1" onClick={() => props.onDuplicateCard()}>Duplicate this card</button>
       </div>
       <div class="flex overflow-x-hidden gap-3">
         <CardComponent card={props.card()} />
@@ -56,69 +55,72 @@ export default function EditCardForm(props: {
       </div>
     </section>
     <section class="@container p-2 @xl:p-5 overflow-y-auto overflow-x-hidden">
-      <form class="flex flex-col gap-5">
+      <form class="flex flex-col gap-10">
 
-        <fieldset class="flex flex-col gap-5 border-white border p-5">
-          <legend class="text-white">Aspect</legend>
-          <div class="flex flex-col gap-1">
-            <label for="frame" class="text-white">Frame</label>
+        <fieldset class="flex flex-col gap-5 p-3">
+          <legend class="text-white divider w-full">Aspect</legend>
+
+          <label class="form-control">
+            <span class="label-text text-white">Frame</span>
             <select
               name="frame"
               value={props.card().aspect.frame}
               onChange={(e) => props.setCard(p => ({ ...p, aspect: { ...p.aspect, frame: e.currentTarget.value as any } }))}
-              class="w-full p-2 border rounded shadow-inner bg-stone-200"
+              class="select"
             >
               {cardFrames.map(color => <option value={color}>{color}</option>)}
             </select>
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="legendary" class="text-white">
+          </label>
+
+          <div class="form-control">
+            <label class="label cursor-pointer">
               <input
                 name="legendary"
                 type="checkbox"
-                class="flex-1 mr-3"
+                class="checkbox checkbox-primary"
                 checked={props.card().aspect.legendary}
                 onChange={(e) => props.setCard(p => ({ ...p, aspect: { ...p.aspect, legendary: e.currentTarget.checked as any } }))}
               />
-
-              Legendary
+              <span class="mr-auto ml-5 text-white">Legendary</span>
             </label>
           </div>
-          <div class="flex flex-col gap-1">
-            <label for="color" class="text-white">Color</label>
+          <label class="form-control">
+            <span class="label-text text-white">Color</span>
             <select
               name="color"
               value={props.card().aspect.color}
               onChange={(e) => props.setCard(p => ({ ...p, aspect: { ...p.aspect, color: e.currentTarget.value as any } }))}
-              class="w-full p-2 border rounded shadow-inner bg-stone-200"
+              class="select"
             >
               {cardColors.map(frame => <option value={frame}>{frame}</option>)}
             </select>
-          </div>
+          </label>
         </fieldset>
 
-        <fieldset class="flex flex-col gap-5 border-white border p-5">
-          <legend class="text-white">General Data</legend>
+        <fieldset class="flex flex-col gap-5 p-3">
+          <legend class="text-white divider w-full">General Data</legend>
 
-          <div class="flex flex-col gap-1">
-            <label for="title" class="text-white">Title</label>
+          <label class="flex flex-col gap-1">
+            <span class="label-text text-white">Title</span>
             <input
               name="title"
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="input"
               onInput={(e) => props.setCard(p => ({ ...p, title: e.currentTarget.value }))} value={props.card().title}
             />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="mana" class="text-white">Mana cost</label>
+          </label>
+
+          <label class="form-control">
+            <span class="label-text text-white">Mana cost</span>
             <ManaInput value={props.card().manaCost} setValue={(m) => props.setCard(p => ({ ...p, manaCost: m }))} />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="picture" class="text-white">Picture URL</label>
+          </label>
+
+          <label class="form-control gap-2">
+            <span class="label-text text-white">Picture URL</span>
             <input
               name="picture"
               value={props.card().artUrl}
               onInput={(e) => props.setCard(p => ({ ...p, artUrl: e.currentTarget.value }))}
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="input"
             />
             <input
               name="picture"
@@ -135,17 +137,18 @@ export default function EditCardForm(props: {
                 });
                 reader.readAsDataURL(file)
               }}
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="file-input w-full min-w-0"
             />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="type" class="text-white">Type</label>
+          </label>
+
+          <label class="form-control">
+            <span class="label-text text-white">Type</span>
             <input
               name="type"
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="input"
               onInput={(e) => props.setCard(p => ({ ...p, typeText: e.currentTarget.value }))} value={props.card().typeText ?? ""}
             />
-          </div>
+          </label>
 
           {/* <div class="flex flex-col gap-1"> */}
           {/*   <fieldset> */}
@@ -159,107 +162,111 @@ export default function EditCardForm(props: {
           {/* </div> */}
 
 
-          <div class="flex flex-col gap-1">
-            <label for="oracle" class="text-white">Oracle</label>
+          <label class="form-control">
+            <span class="label-text text-white">Oracle</span>
             <textarea
               name="oracle"
               rows={3}
-              class="bg-stone-200 resize-y min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="textarea"
               onInput={(e) => props.setCard(p => ({ ...p, oracleText: e.currentTarget.value }))} value={props.card().oracleText ?? ""}
             />
-          </div>
-          <div class="flex flex-col gap-1">
-            <label for="flavor" class="text-white">Flavor</label>
+          </label>
+
+          <label class="form-control">
+            <span class="label-text text-white">Flavor</span>
             <textarea
               name="flavor"
               rows={3}
-              class="bg-stone-200 resize-y min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="textarea"
               onInput={(e) => props.setCard(p => ({ ...p, flavorText: e.currentTarget.value }))} value={props.card().flavorText ?? ""}
             />
-          </div>
+          </label>
 
           <div class="flex flex-wrap gap-5">
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="type" class="text-white">Power</label>
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Power</span>
               <input
                 name="type"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, power: e.currentTarget.value }))} value={props.card().power ?? ""}
               />
-            </div>
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="type" class="text-white">Toughness</label>
+            </label>
+
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Toughness</span>
               <input
                 name="type"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, toughness: e.currentTarget.value }))} value={props.card().toughness ?? ""}
               />
-            </div>
+            </label>
           </div>
         </fieldset>
 
-        <fieldset class="flex flex-col gap-5 border-white border p-5">
-          <legend class="text-white">Print data</legend>
+        <fieldset class="flex flex-col gap-5 p-3">
+          <legend class="text-white divider w-full">Print data</legend>
 
           <div class="flex flex-wrap gap-5">
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="collector-number" class="text-white">Collector Number</label>
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Collector Number</span>
               <input
                 name="collector-number"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, collectorNumber: e.currentTarget.value }))} value={props.card().collectorNumber ?? ""}
               />
-            </div>
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="rarity" class="text-white">Rarity</label>
+            </label>
+
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Rarity</span>
               <input
                 name="rarity"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, rarity: e.currentTarget.value }))} value={props.card().rarity ?? ""}
               />
-            </div>
+            </label>
           </div>
+
           <div class="flex flex-wrap gap-5">
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="set" class="text-white">Set</label>
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Set</span>
               <input
                 name="set"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, set: e.currentTarget.value }))} value={props.card().set ?? ""}
               />
-            </div>
-            <div class="flex flex-col gap-1 flex-1">
-              <label for="lang" class="text-white">Language</label>
+            </label>
+
+            <label class="form-control flex-1 min-w-0">
+              <span class="label-text text-white">Language</span>
               <input
                 name="lang"
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
                 onInput={(e) => props.setCard(p => ({ ...p, lang: e.currentTarget.value }))} value={props.card().lang ?? ""}
               />
-            </div>
-
+            </label>
           </div>
 
-          <div class="flex flex-col gap-1 flex-1">
-            <label for="artist" class="text-white">Artist name</label>
+          <label class="form-control flex-1 min-w-0">
+            <span class="label-text text-white">Artist name</span>
             <input
               name="artist"
-              class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+              class="input"
               onInput={(e) => props.setCard(p => ({ ...p, artist: e.currentTarget.value }))} value={props.card().artist ?? ""}
             />
-          </div>
+          </label>
         </fieldset>
 
-        <fieldset class="flex flex-col gap-5 border-white border p-5">
-          <legend class="text-white">Back of card</legend>
+        <fieldset class="flex flex-col gap-5 p-3">
+          <legend class="text-white divider w-full">Back of card</legend>
 
           <Show when={!props.card().verso || typeof props.card().verso == 'string'}>
-            <div class="flex flex-col gap-1">
-              <label for="picture" class="text-white">Picture URL</label>
+            <label class="form-control gap-3">
+              <span class="label-text text-white">Picture URL</span>
               <input
                 name="picture"
                 value={(props.card().verso ?? "") as string}
                 onInput={(e) => props.setCard(p => ({ ...p, verso: e.currentTarget.value }))}
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="input"
               />
               <input
                 name="picture"
@@ -277,10 +284,11 @@ export default function EditCardForm(props: {
                   });
                   reader.readAsDataURL(file)
                 }}
-                class="bg-stone-200 min-w-0 rounded flex-1 pl-2 py-2 text-stone-600"
+                class="file-input w-full min-w-0"
               />
-              <Button
+              <button
                 type="button"
+                class="btn btn-secondary w-full"
                 disabled={defaultVerso() == props.card().verso || props.card().verso == 'default'}
                 onClick={() => {
                   const url = props.card().verso;
@@ -288,8 +296,8 @@ export default function EditCardForm(props: {
                   setDefaultVerso(url as string)
                 }}>
                 Make this back the default one
-              </Button>
-            </div>
+              </button>
+            </label>
           </Show>
         </fieldset>
       </form>

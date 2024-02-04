@@ -23,6 +23,7 @@
     "@total-typescript/ts-reset": "^0.4.2",
     "@types/node": "^18.15.11",
     "autoprefixer": "^10.4.14",
+    "daisyui": "^4.6.1",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.3.1",
     "typescript": "^4.9.3",

@@ -6,14 +6,12 @@ import {
   createSignal,
 } from "solid-js";
 import { createStore } from "solid-js/store";
-import Button from "./components/button";
 import CardComponent from "./components/card/card";
 import CardVerso from "./components/card/card-verso";
 import EditCardForm from "./components/edit-card-form";
-import InfoTab from "./components/info-tab";
 import Sidebar from "./components/sidebar";
 import { parseMtgo } from "./services/mtgo-parser";
-import { fetchCard, fetchCardType } from "./services/scryfall";
+import { fetchCard } from "./services/scryfall";
 import { Card, getEmptyCard } from "./types/card";
 
 function createResourceStore<T extends {}>(
@@ -189,7 +187,7 @@ export default function App() {
             )}
           </For>
 
-          <Button class="grid place-content-center shadow-xl print:hidden rounded-xl hover:!bg-stone-800"
+          <button class="grid place-content-center shadow-xl print:hidden rounded-xl text-white bg-stone-500 hover:!bg-stone-800"
             onClick={() => {
               const nextIndex = cardList().value.length;
               setCardList((prev) => [...prev, getEmptyCard()]);
@@ -205,7 +203,7 @@ export default function App() {
               margin: "auto",
               "box-sizing": "content-box",
             }}
-          >Create a custom card</Button>
+          >Create a custom card</button>
         </div>
       </div>
       <Show when={selectedCard()}>

@@ -19,7 +19,7 @@ export default function CardComponent(
     <div
       tabIndex={0}
       onClick={props.onClick}
-      class="rounded-xl print:rounded-none card group outline-amber-500 print:outline-none"
+      class="rounded-xl print:rounded-none group outline !focus:outline outline-amber-500 print:outline-none"
       style={{
         position: "relative",
         display: "flex",

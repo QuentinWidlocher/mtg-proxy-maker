@@ -1,5 +1,4 @@
-import { For, Setter, createSignal } from "solid-js";
-import Button from "./button";
+import { Setter, createSignal } from "solid-js";
 import InfoTab from "./info-tab";
 import ScryfallSearchBox from "./scryfall-searchbox";
 
@@ -20,17 +19,17 @@ export default function Sidebar(props: SidebarProps) {
     <>
       <aside class="h-full shadow-xl overflow-y-hidden print:hidden w-full bg-stone-500">
         <div class="flex flex-col h-full gap-5 p-5">
-          <div>
-            <label for="language" class="text-white">
+          <label class="form-control">
+            <div class="label-text text-white">
               Card language
-            </label>
+            </div>
             <select
               name="language"
               value={props.language}
               onChange={(e) => {
                 props.setLanguage(e.target.value);
               }}
-              class="w-full p-1 border rounded shadow-inner bg-stone-200"
+              class="select"
             >
               <option value="en">English</option>
               <option value="sp">Spanish</option>
@@ -45,45 +44,45 @@ export default function Sidebar(props: SidebarProps) {
               <option value="ct">Traditional Chinese</option>
               <option value="ph">Phyrexian</option>
             </select>
-          </div>
+          </label>
           <ScryfallSearchBox
             onAddCard={({ name }) => props.onAddCard(name)}
           />
-          <Button
+          <button
             type="button"
-            class="w-full"
+            class="btn btn-secondary w-full"
             onClick={() => setRawCardListDialogOpen(true)}
           >
             Import from MTGO
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            class="w-full"
+            class="btn btn-secondary w-full"
             onClick={() => props.onClearList()}
           >
             Clear list
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            class="w-full text-amber-50 !bg-amber-500 hover:!bg-amber-600 disabled:!bg-amber-400 disabled:!cursor-not-allowed disabled:!text-amber-100"
+            class="btn btn-primary w-full"
             onClick={() => {
               print();
             }}
           >
             Print all cards
-          </Button>
+          </button>
 
-          <div class="flex flex-col gap-1">
-            <label for="print-versos" class="text-white">
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <span class="label-text ml-auto mr-5 text-white">Print card backs</span>
               <input
                 name="print-versos"
                 type="checkbox"
-                class="flex-1 mr-3"
+                class="toggle toggle-primary"
                 onChange={(e) => props.setPrintVersos(e.currentTarget.checked)}
                 checked={props.printVersos}
               />
 
-              Print card backs
             </label>
           </div>
 
@@ -98,7 +97,7 @@ export default function Sidebar(props: SidebarProps) {
       >
         <form
           method="dialog"
-          class="flex flex-col h-full gap-2"
+          class="flex flex-col h-full gap-5"
           onSubmit={async (e) => {
             e.preventDefault();
             const rawCardList = (e.target as HTMLFormElement).cardList.value;
@@ -106,22 +105,22 @@ export default function Sidebar(props: SidebarProps) {
             setRawCardListDialogOpen(false);
           }}
         >
-          <label for="cardList" class="text-white">
+          <label for="cardList" class="label-text text-white">
             Paste your card list here
           </label>
           <textarea
             name="cardList"
-            class="flex-1 w-full h-1/2 p-1 border rounded shadow-inner bg-stone-200"
+            class="textarea h-full"
           />
           <div class="w-full flex gap-2">
-            <Button
-              class="w-full !bg-stone-500"
+            <button
+              class="btn btn-secondary flex-1"
               type="reset"
               onClick={() => setRawCardListDialogOpen(false)}
             >
               Cancel
-            </Button>
-            <Button class="w-full !bg-stone-500">Submit</Button>
+            </button>
+            <button class="btn btn-primary flex-1">Submit</button>
           </div>
         </form>
       </dialog>

@@ -8,11 +8,11 @@ This app enables the creation of very high resolution Magic proxy cards, without
 - Search Scryfall for card with name
 - Creates high resolution of cards, even non-english one
 - Generates a different artwork for each basic land you want to generate (it's nicer imo)
+- Edit or create cards (including backs)
 
 ## What can't it do ?
 
-- All non-basic cards (Planeswalker, Saga etc.)
-- Choosing versions of card, or editing them
+- All non-basic cards (only Planeswalker, but not Saga, Split, Flip, Adventures etc.)
 - Adjust printing variables (but you can play around with CSS variables inside the html if you want)
 
 ## Usage
