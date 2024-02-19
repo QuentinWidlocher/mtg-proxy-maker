@@ -201,7 +201,7 @@ export async function fetchVariants(title: string): Promise<Partial<Card>[]> {
         totalVariants: arr.length,
       };
 
-      if (card["type_line"].toLowerCase().includes("token")) {
+      if (card["type_line"]?.toLowerCase().includes("token")) {
         const manaTypes = (card["colors"] ?? card["color_identity"]).flatMap(
           manaLetterToType
         );
